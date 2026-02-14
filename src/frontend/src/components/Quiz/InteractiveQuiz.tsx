@@ -49,16 +49,20 @@ export default function InteractiveQuiz({ quizArray }: InteractiveQuizProps) {
               {quiz.options.map((option, optionIndex) => {
                 const isSelected = state?.selectedOption === option;
                 const isCorrectOption = option === quiz.correct_answer;
-                const showFeedback = isSelected && state;
+                const hasAnswered = !!state;
 
                 let buttonVariant: 'outline' | 'default' | 'destructive' = 'outline';
                 let buttonClass = '';
 
-                if (showFeedback) {
-                  if (state.isCorrect) {
+                // If user has answered this question
+                if (hasAnswered) {
+                  // Show green for the correct answer (whether selected or not)
+                  if (isCorrectOption) {
                     buttonVariant = 'default';
                     buttonClass = 'bg-green-600 hover:bg-green-700 border-green-600 text-white';
-                  } else {
+                  }
+                  // Show red for the selected incorrect answer
+                  else if (isSelected && !state.isCorrect) {
                     buttonVariant = 'destructive';
                   }
                 }
@@ -69,22 +73,21 @@ export default function InteractiveQuiz({ quizArray }: InteractiveQuizProps) {
                     variant={buttonVariant}
                     className={`w-full justify-start text-left h-auto py-3 px-4 ${buttonClass}`}
                     onClick={() => handleOptionClick(index, option, quiz.correct_answer)}
-                    disabled={!!state}
+                    disabled={hasAnswered}
                   >
                     <span className="mr-3 font-bold">
                       {String.fromCharCode(65 + optionIndex)}.
                     </span>
                     <span className="flex-1">{option}</span>
-                    {showFeedback && (
+                    {hasAnswered && isCorrectOption && (
                       <span className="ml-2 flex items-center gap-1">
-                        {state.isCorrect ? (
-                          <>
-                            <CheckCircle2 className="h-5 w-5" />
-                            <span className="font-semibold">Correct Answer</span>
-                          </>
-                        ) : (
-                          <XCircle className="h-5 w-5" />
-                        )}
+                        <CheckCircle2 className="h-5 w-5" />
+                        <span className="font-semibold">Correct Answer</span>
+                      </span>
+                    )}
+                    {hasAnswered && isSelected && !state.isCorrect && (
+                      <span className="ml-2 flex items-center gap-1">
+                        <XCircle className="h-5 w-5" />
                       </span>
                     )}
                   </Button>

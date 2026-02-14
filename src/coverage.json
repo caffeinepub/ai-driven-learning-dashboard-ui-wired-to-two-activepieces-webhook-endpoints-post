@@ -1,62 +1,57 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-14T02:00:10.841Z",
+  "generatedAt": "2026-02-14T11:39:21.948Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
     "total": 3,
-    "implemented": 3,
+    "implemented": 2,
     "items": [
       {
-        "id": "REQ-11",
-        "summary": "Allow the app to be configured with a single ActivePieces webhook URL for both file upload processing and Ask AI by supporting the case where VITE_ENDPOINT_A_URL and VITE_ENDPOINT_B_URL point to the same URL and by providing a fallback so that if only one of these environment variables is set, the app uses the configured one for both actions.",
+        "id": "REQ-36",
+        "summary": "Implement (or re-implement) the dedicated Summary Delete control as a trash icon button in the top-right corner of the Summary card. When clicked, it must clear ONLY the Summary text (set summary state to an empty string) and must not modify the Quiz section/state in any way.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/lib/env.ts",
-          "frontend/src/lib/activepieces.ts"
+          "frontend/src/components/SummaryCard.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/lib/env.ts",
-          "frontend/src/lib/activepieces.ts"
+          "frontend/src/components/SummaryCard.tsx"
         ]
       },
       {
-        "id": "REQ-12",
-        "summary": "When calling the single ActivePieces webhook URL, include an explicit action discriminator in the POST request body so the external automation can route the request appropriately: file uploads must send action=\"process_notes\" and expect {summary, quiz_array}; Ask AI must send action=\"ask_ai\" along with user_question and uploaded_notes and expect {ai_answer}.",
+        "id": "REQ-37",
+        "summary": "Wire the Summary Delete button into Dashboard state management by adding a Summary delete handler in the Dashboard page and passing it into the SummaryCard component via props, without changing the existing Quiz delete handler or QuizSection behavior.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/lib/activepieces.ts",
-          "frontend/src/lib/types.ts"
+          "frontend/src/pages/DashboardPage.tsx",
+          "frontend/src/components/SummaryCard.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/lib/activepieces.ts"
+          "frontend/src/pages/DashboardPage.tsx",
+          "frontend/src/components/SummaryCard.tsx"
         ]
       },
       {
-        "id": "REQ-13",
-        "summary": "Update the frontend configuration documentation/template to reflect that a single webhook URL can be used for both actions, while still supporting separate URLs, and ensure all guidance is in English.",
-        "status": "implemented",
+        "id": "REQ-38",
+        "summary": "Create a new build draft from the updated repository state and run the standard build + deployment pipeline to produce a fresh deployment.",
+        "status": "missing",
         "plannedFiles": [
-          "frontend/.env.example"
+          "frontend/DEPLOYMENT.md"
         ],
-        "matchedFiles": [
-          "frontend/.env.example"
-        ]
+        "matchedFiles": []
       }
     ]
   },
   "changedFiles": [
     "build-request.json",
-    "build-template/README.md",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/.env.example",
-    "frontend/src/lib/activepieces.ts",
-    "frontend/src/lib/env.ts",
+    "frontend/src/components/SummaryCard.tsx",
+    "frontend/src/pages/DashboardPage.tsx",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

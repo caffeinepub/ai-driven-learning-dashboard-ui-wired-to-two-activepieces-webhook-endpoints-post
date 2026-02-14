@@ -1,31 +1,32 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-14T02:00:10.838Z",
-  "summary": "All three requested frontend requirements (single-URL fallback for A/B endpoints, action discriminator fields for upload vs Ask AI with strict response validation, and updated English .env.example guidance) appear to be implemented in the modified files. Two additional non-requested metadata/documentation summary files were also modified.",
-  "missing_requirements": [],
-  "hallucinated_features": [
+  "generatedAt": "2026-02-14T11:39:21.945Z",
+  "summary": "REQ-36 and REQ-37 appear implemented: SummaryCard now supports a top-right trash icon that calls a DashboardPage handler which clears only `summary` state, leaving `quizArray` untouched. REQ-38 (fresh build draft + successful build/deploy) cannot be verified from the provided diff summary and appears missing.",
+  "missing_requirements": [
     {
-      "description": "Updated/maintained a repository-level frontend file summary document (not requested by the BuildRequest).",
-      "reason": "The BuildRequest only asked for runtime behavior changes (REQ-11, REQ-12) and updating frontend/.env.example (REQ-13). No requirement mentions changing a separate file summary artifact.",
+      "id": "REQ-38",
+      "requirement": "Create a new build draft from the updated repository state and run the standard build + deployment pipeline to produce a fresh deployment.",
+      "reason": "The diff only shows code changes; there is no evidence of build draft creation, build pipeline execution, successful TypeScript/frontend build, or deployment URL output.",
       "evidence": [
-        "frontend-file-summaries.txt"
-      ]
-    },
-    {
-      "description": "Modified project state/metadata JSON describing features and project summary (not requested by the BuildRequest).",
-      "reason": "The BuildRequest does not request any changes to project_state.json; it focuses on frontend env fallback, request payload changes, and .env.example documentation.",
-      "evidence": [
-        "project_state.json"
+        "file-diff summary shows only source modifications; no CI/deploy logs or deployment artifacts included"
       ]
     }
   ],
-  "confidence": 0.78,
+  "hallucinated_features": [
+    {
+      "description": "SummaryCard renders an empty-state card with icon and message when `summary` is falsy (\"No summary available. Upload your notes to get started.\").",
+      "reason": "The request/AC indicate the dashboard only renders the Summary section when `summary` is truthy, and do not ask for an empty-state UI inside SummaryCard. This adds new UI/text not requested.",
+      "evidence": [
+        "frontend/src/components/SummaryCard.tsx (branch `if (!summary) { ... <p>No summary available. Upload your notes to get started.</p> ... }`)"
+      ]
+    }
+  ],
+  "confidence": 0.76,
   "changed_files": [
     "frontend-file-summaries.txt",
-    "frontend/.env.example",
-    "frontend/src/lib/activepieces.ts",
-    "frontend/src/lib/env.ts",
+    "frontend/src/components/SummaryCard.tsx",
+    "frontend/src/pages/DashboardPage.tsx",
     "project_state.json"
   ]
 }

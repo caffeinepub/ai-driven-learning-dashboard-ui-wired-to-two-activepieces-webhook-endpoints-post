@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Sparkles, Trash2, AlertCircle, Loader2 } from 'lucide-react';
+import WebhookSetupHelpPanel from '../WebhookSetupHelpPanel';
 
 interface AskAIModuleProps {
   onAsk: (question: string) => void;
@@ -12,6 +13,9 @@ interface AskAIModuleProps {
   error: string;
   onClear: () => void;
   hasContext: boolean;
+  showWebhookHelp?: boolean;
+  onWebhookSaved?: () => void;
+  onWebhookCleared?: () => void;
 }
 
 export default function AskAIModule({
@@ -21,6 +25,9 @@ export default function AskAIModule({
   error,
   onClear,
   hasContext,
+  showWebhookHelp = false,
+  onWebhookSaved,
+  onWebhookCleared,
 }: AskAIModuleProps) {
   const [question, setQuestion] = useState('');
 
@@ -95,10 +102,18 @@ export default function AskAIModule({
         </div>
 
         {error && (
-          <Alert variant="destructive">
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
+          <div className="space-y-4">
+            <Alert variant="destructive">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+            {showWebhookHelp && (
+              <WebhookSetupHelpPanel 
+                onWebhookSaved={onWebhookSaved}
+                onWebhookCleared={onWebhookCleared}
+              />
+            )}
+          </div>
         )}
 
         {aiAnswer && (

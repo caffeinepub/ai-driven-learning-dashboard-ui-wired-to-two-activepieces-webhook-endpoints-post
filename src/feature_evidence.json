@@ -2,11 +2,10 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-allow-the-app-to-be-configured-with-a-single-activepieces-webhook-url-for-both-file-upload-processing-and-ask-ai-by-supporting-the-case-where-vite-endpoint-a-url-and-vite-endpoint-b-url-point-to-the-same-url-and-by-providing-a-fallback-so-that-if-only-one-of-these-environment-variables-is-set-the-app-uses-the-configured-one-for-both-actions",
-      "featureTitle": "Allow the app to be configured with a single ActivePieces webhook URL for both file upload processing and Ask AI by supporting the case where VITE_ENDPOINT_A_URL and VITE_ENDPOINT_B_URL point to the same URL and by providing a fallback so that if only one of these environment variables is set, the app uses the configured one for both actions.",
+      "featureId": "feature-implement-or-re-implement-the-dedicated-summary-delete-control-as-a-trash-icon-button-in-the-top-right-corner-of-the-summary-card-when-clicked-it-must-clear-only-the-summary-text-set-summary-state-to-an-empty-string-and-must-not-modify-the-quiz-section-state-in-any-way",
+      "featureTitle": "Implement (or re-implement) the dedicated Summary Delete control as a trash icon button in the top-right corner of the Summary card. When clicked, it must clear ONLY the Summary text (set summary state to an empty string) and must not modify the Quiz section/state in any way.",
       "files": [
-        "frontend/src/lib/activepieces.ts",
-        "frontend/src/lib/env.ts"
+        "frontend/src/components/SummaryCard.tsx"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -16,15 +15,16 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-11"
+        "REQ-36"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-when-calling-the-single-activepieces-webhook-url-include-an-explicit-action-discriminator-in-the-post-request-body-so-the-external-automation-can-route-the-request-appropriately-file-uploads-must-send-action-process-notes-and-expect-summary-quiz-array-ask-ai-must-send-action-ask-ai-along-with-user-question-and-uploaded-notes-and-expect-ai-answer",
-      "featureTitle": "When calling the single ActivePieces webhook URL, include an explicit action discriminator in the POST request body so the external automation can route the request appropriately: file uploads must send action=\"process_notes\" and expect {summary, quiz_array}; Ask AI must send action=\"ask_ai\" along with user_question and uploaded_notes and expect {ai_answer}.",
+      "featureId": "feature-wire-the-summary-delete-button-into-dashboard-state-management-by-adding-a-summary-delete-handler-in-the-dashboard-page-and-passing-it-into-the-summarycard-component-via-props-without-changing-the-existing-quiz-delete-handler-or-quizsection-behavior",
+      "featureTitle": "Wire the Summary Delete button into Dashboard state management by adding a Summary delete handler in the Dashboard page and passing it into the SummaryCard component via props, without changing the existing Quiz delete handler or QuizSection behavior.",
       "files": [
-        "frontend/src/lib/activepieces.ts"
+        "frontend/src/components/SummaryCard.tsx",
+        "frontend/src/pages/DashboardPage.tsx"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -34,25 +34,7 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-12"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-update-the-frontend-configuration-documentation-template-to-reflect-that-a-single-webhook-url-can-be-used-for-both-actions-while-still-supporting-separate-urls-and-ensure-all-guidance-is-in-english",
-      "featureTitle": "Update the frontend configuration documentation/template to reflect that a single webhook URL can be used for both actions, while still supporting separate URLs, and ensure all guidance is in English.",
-      "files": [
-        "frontend/.env.example"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-13"
+        "REQ-37"
       ],
       "confidence": "high"
     }

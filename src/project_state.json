@@ -1,15 +1,23 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 5,
-  "summary": "AI-Driven Learning Dashboard: React frontend dashboard where Summary and Quiz are populated from an ActivePieces webhook response after file upload, and Ask AI uses the same webhook on-demand but with a different action to fetch only ai_answer. No database/Supabase persistence; UI updates from local state without refresh. All backend interactions via POST.",
+  "projectStateVersion": 27,
+  "summary": "AI-Driven Learning Dashboard: React frontend dashboard where Summary and Quiz are populated from a single ActivePieces webhook response after file upload. Ask AI functionality is currently hidden/disabled in the UI (the entire Ask AI section, input field, and button are not shown). Frontend must ONLY use VITE_WEBHOOK_URL (remove VITE_ENDPOINT_A_URL/VITE_ENDPOINT_B_URL from code, env templates, and error checks). No database/Supabase persistence; UI updates from local state without refresh. All backend interactions via POST.",
   "architectural_notes": [
     "Backend is ActivePieces automation; frontend integrates via webhooks (URLs provided later).",
     "Summary/Quiz/AI Answer must be derived strictly from backend responses; no DB/Supabase persistence; store in local React state.",
     "Ask AI requests must include user_question plus uploaded_notes/context.",
-    "Frontend will use one webhook URL for both flows; requests must include an action/type field so backend can route: file upload => summary+quiz, Ask AI => ai_answer."
+    "Frontend will use one webhook URL for both flows; requests must include an action/type field so backend can route: file upload => summary+quiz, Ask AI => ai_answer.",
+    "Support single webhook URL configuration only; remove/ignore separate Endpoint A/B URL configuration in the frontend (one URL used for both actions with action discriminator).",
+    "Frontend configuration is single-URL only: read ONLY VITE_WEBHOOK_URL; remove VITE_ENDPOINT_A_URL/VITE_ENDPOINT_B_URL from codepaths, env templates, and error checks.",
+    "ActivePieces webhook URL provided for configuration/testing: https://cloud.activepieces.com/api/v1/webhooks/arB5MIDx32mR1vdmBIC0r/sync (to be set as VITE_WEBHOOK_URL in frontend/.env or deployment env).",
+    "Ask AI UI is intentionally hidden/disabled (entire section removed from view, including input and button) until re-enabled."
   ],
-  "known_issues": [],
-  "isFixRequest": false,
+  "known_issues": [
+    "File upload currently fails with user-facing error: \"No webhook URL configured. Please set VITE_WEBHOOK_URL in your environment variables.\" (indicates VITE_WEBHOOK_URL missing in current deployment environment).",
+    "User cannot find/access the deployment Environment Variables panel in the hosting UI (sidebar appears hidden/collapsed or blocked by popups), preventing setting VITE_WEBHOOK_URL and leaving the app stuck on the \"No webhook URL configured\" error.",
+    "Deployment pipeline currently failing with error: \"You don't have a draft yet\" (deployer expects a draft version but no draft build was created)."
+  ],
+  "isFixRequest": true,
   "existing_features": [
     {
       "id": "feature-implement-a-configuration-mechanism-for-two-external-activepieces-webhook-urls-endpoint-a-for-file-processing-endpoint-b-for-ask-ai-without-hardcoding-them-use-environment-variables-e-g-vite-endpoint-a-url-and-vite-endpoint-b-url-and-show-a-clear-user-facing-error-in-english-if-either-url-is-missing-when-an-action-is-triggered",
@@ -114,6 +122,158 @@
         "REQ-13"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-remove-the-two-url-webhook-configuration-option-from-the-frontend-and-replace-it-with-a-single-webhook-url-configuration-used-for-both-file-upload-process-notes-and-ask-ai-ask-ai-use-one-environment-variable-only-e-g-vite-webhook-url",
+      "title": "Remove the two-URL webhook configuration option from the frontend and replace it with a single webhook URL configuration used for both file upload (process_notes) and Ask AI (ask_ai). Use one environment variable only (e.g., VITE_WEBHOOK_URL).",
+      "reqIds": [
+        "REQ-14"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-frontend-environment-variable-template-documentation-to-reflect-the-single-url-only-configuration-and-remove-the-dual-url-guidance",
+      "title": "Update the frontend environment variable template/documentation to reflect the single-URL-only configuration and remove the dual-URL guidance.",
+      "reqIds": [
+        "REQ-15"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-when-file-upload-or-ask-ai-fails-due-to-missing-vite-webhook-url-show-an-in-app-help-section-that-explains-how-to-configure-vite-webhook-url-in-english-and-provides-copy-paste-snippets-the-user-can-use-to-set-the-variable",
+      "title": "When file upload or Ask AI fails due to missing VITE_WEBHOOK_URL, show an in-app help section that explains how to configure VITE_WEBHOOK_URL (in English) and provides copy-paste snippets the user can use to set the variable.",
+      "reqIds": [
+        "REQ-19"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-short-repo-local-documentation-file-describing-how-to-configure-the-activepieces-webhook-for-this-app-using-only-vite-webhook-url-including-an-explicit-copy-paste-block-and-common-troubleshooting-notes-for-the-missing-variable-error",
+      "title": "Add a short, repo-local documentation file describing how to configure the ActivePieces webhook for this app using ONLY VITE_WEBHOOK_URL, including an explicit copy-paste block and common troubleshooting notes for the missing-variable error.",
+      "reqIds": [
+        "REQ-20"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-frontend-webhook-configuration-help-ui-to-include-the-user-provided-webhook-url-https-cloud-activepieces-com-api-v1-webhooks-arb5midx32mr1vdmbic0r-sync-as-a-ready-to-copy-example-for-vite-webhook-url",
+      "title": "Update the frontend webhook configuration help UI to include the user-provided webhook URL (https://cloud.activepieces.com/api/v1/webhooks/arB5MIDx32mR1vdmBIC0r/sync) as a ready-to-copy example for VITE_WEBHOOK_URL.",
+      "reqIds": [
+        "REQ-21"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-frontend-environment-template-frontend-env-example-to-provide-the-user-provided-webhook-url-https-cloud-activepieces-com-api-v1-webhooks-arb5midx32mr1vdmbic0r-sync-as-the-example-value-for-vite-webhook-url",
+      "title": "Update the frontend environment template (frontend/.env.example) to provide the user-provided webhook URL (https://cloud.activepieces.com/api/v1/webhooks/arB5MIDx32mR1vdmBIC0r/sync) as the example value for VITE_WEBHOOK_URL.",
+      "reqIds": [
+        "REQ-23"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-an-in-app-way-for-users-to-enter-and-save-the-activepieces-webhook-url-when-the-app-is-missing-vite-webhook-url-so-the-app-can-still-process-file-uploads-and-ask-ai-without-requiring-access-to-the-hosting-environment-variables-ui",
+      "title": "Add an in-app way for users to enter and save the ActivePieces webhook URL when the app is missing `VITE_WEBHOOK_URL`, so the app can still process file uploads and Ask AI without requiring access to the hosting Environment Variables UI.",
+      "reqIds": [
+        "REQ-24"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-a-persistent-client-side-storage-for-the-webhook-url-override-e-g-localstorage-and-update-the-webhook-resolution-logic-so-requests-use-the-override-url-when-present-otherwise-use-import-meta-env-vite-webhook-url",
+      "title": "Implement a persistent client-side storage for the webhook URL override (e.g., localStorage) and update the webhook resolution logic so requests use the override URL when present; otherwise use `import.meta.env.VITE_WEBHOOK_URL`.",
+      "reqIds": [
+        "REQ-25"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-existing-missing-webhook-help-ui-to-include-a-ready-to-use-input-field-and-actions-save-webhook-url-and-clear-saved-webhook-url-and-ensure-it-prominently-explains-that-setting-environment-variables-may-be-unavailable-and-that-the-url-can-be-set-inside-the-app",
+      "title": "Update the existing missing-webhook help UI to include a ready-to-use input field and actions: Save webhook URL and Clear saved webhook URL, and ensure it prominently explains that setting environment variables may be unavailable and that the URL can be set inside the app.",
+      "reqIds": [
+        "REQ-26"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-basic-validation-for-the-user-provided-webhook-url-in-the-ui-non-empty-and-must-start-with-http-or-https-and-display-a-clear-english-error-message-if-invalid",
+      "title": "Add basic validation for the user-provided webhook URL in the UI (non-empty and must start with http:// or https://) and display a clear English error message if invalid.",
+      "reqIds": [
+        "REQ-27"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-in-app-webhook-setup-ui-so-that-when-no-webhook-url-override-is-currently-saved-the-input-field-is-pre-populated-with-the-user-provided-webhook-url-https-cloud-activepieces-com-api-v1-webhooks-arb5midx32mr1vdmbic0r-sync-to-enable-one-click-saving",
+      "title": "Update the in-app webhook setup UI so that when no webhook URL override is currently saved, the input field is pre-populated with the user-provided webhook URL `https://cloud.activepieces.com/api/v1/webhooks/arB5MIDx32mR1vdmBIC0r/sync` to enable one-click saving.",
+      "reqIds": [
+        "REQ-28"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-revise-the-missing-webhook-user-facing-error-text-so-it-clearly-indicates-that-the-webhook-can-be-configured-either-by-setting-vite-webhook-url-or-by-saving-a-webhook-url-inside-the-app-via-the-webhook-configuration-panel",
+      "title": "Revise the missing-webhook user-facing error text so it clearly indicates that the webhook can be configured either by setting `VITE_WEBHOOK_URL` or by saving a webhook URL inside the app (via the Webhook Configuration panel).",
+      "reqIds": [
+        "REQ-29"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-a-new-build-draft-using-the-current-repository-state-and-run-the-standard-build-deployment-pipeline-to-produce-a-fresh-deployment",
+      "title": "Create a new build draft using the current repository state and run the standard build + deployment pipeline to produce a fresh deployment.",
+      "reqIds": [
+        "REQ-31"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-modify-the-dashboard-page-ui-to-completely-hide-the-entire-ask-ai-section-so-it-is-not-visible-anywhere-in-the-frontend-including-the-section-heading-chat-question-input-field-and-the-ask-ai-submit-button",
+      "title": "Modify the Dashboard page UI to completely hide the entire “Ask AI” section so it is not visible anywhere in the frontend, including the section heading, chat/question input field, and the “Ask AI” submit button.",
+      "reqIds": [
+        "REQ-32"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-interactive-quiz-option-onclick-feedback-rendering-so-that-after-a-user-selects-an-answer-1-if-the-selected-answer-is-correct-the-clicked-option-s-background-turns-green-2-if-the-selected-answer-is-incorrect-the-clicked-option-s-background-turns-red-and-the-option-matching-correct-answer-immediately-turns-green-at-the-same-time-within-the-same-question",
+      "title": "Update the Interactive Quiz option onClick/feedback rendering so that after a user selects an answer: (1) if the selected answer is correct, the clicked option’s background turns green; (2) if the selected answer is incorrect, the clicked option’s background turns red AND the option matching correct_answer immediately turns green at the same time (within the same question).",
+      "reqIds": [
+        "REQ-33"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-separate-delete-control-trash-icon-specifically-for-the-summary-section-by-placing-an-icon-button-in-the-top-right-corner-of-the-summary-card-when-clicked-it-must-clear-only-the-summary-text-reset-summary-to-empty-and-must-not-modify-the-quiz-section-state-in-any-way",
+      "title": "Add a separate Delete control (trash icon) specifically for the Summary section by placing an icon button in the top-right corner of the Summary card; when clicked, it must clear only the summary text (reset Summary to empty) and must not modify the Quiz section/state in any way.",
+      "reqIds": [
+        "REQ-34"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-wire-the-summary-delete-button-into-dashboard-state-management-by-providing-a-summary-delete-handler-that-clears-only-the-summary-state-and-passing-it-into-the-summary-card-component-without-changing-the-existing-quiz-delete-handler",
+      "title": "Wire the Summary delete button into Dashboard state management by providing a Summary delete handler that clears only the summary state and passing it into the Summary card component without changing the existing Quiz delete handler.",
+      "reqIds": [
+        "REQ-35"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-or-re-implement-the-dedicated-summary-delete-control-as-a-trash-icon-button-in-the-top-right-corner-of-the-summary-card-when-clicked-it-must-clear-only-the-summary-text-set-summary-state-to-an-empty-string-and-must-not-modify-the-quiz-section-state-in-any-way",
+      "title": "Implement (or re-implement) the dedicated Summary Delete control as a trash icon button in the top-right corner of the Summary card. When clicked, it must clear ONLY the Summary text (set summary state to an empty string) and must not modify the Quiz section/state in any way.",
+      "reqIds": [
+        "REQ-36"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-wire-the-summary-delete-button-into-dashboard-state-management-by-adding-a-summary-delete-handler-in-the-dashboard-page-and-passing-it-into-the-summarycard-component-via-props-without-changing-the-existing-quiz-delete-handler-or-quizsection-behavior",
+      "title": "Wire the Summary Delete button into Dashboard state management by adding a Summary delete handler in the Dashboard page and passing it into the SummaryCard component via props, without changing the existing Quiz delete handler or QuizSection behavior.",
+      "reqIds": [
+        "REQ-37"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -158,9 +318,81 @@
       "summary": "Support using a single ActivePieces webhook URL for both file upload and Ask AI by sending an explicit action/type in the POST body (e.g., process_notes vs ask_ai) and parsing responses accordingly",
       "reqIds": [],
       "status": "pending"
+    },
+    {
+      "id": "AR-8",
+      "summary": "Simplify webhook configuration to a single URL only (remove/ignore two-URL option VITE_ENDPOINT_A_URL/VITE_ENDPOINT_B_URL); use one env var for both actions and keep clear English error when missing",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-9",
+      "summary": "Remove all remaining references to the legacy environment variables VITE_ENDPOINT_A_URL and VITE_ENDPOINT_B_URL from the frontend codebase, including any fallback/dual-URL logic, configuration helpers, and request builders, so the app ONLY reads VITE_WEBHOOK_URL for both \"process_notes\" and \"ask_ai\" actions.",
+      "reqIds": [
+        "REQ-16"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-10",
+      "summary": "Ensure all user-facing error messages and validation checks related to webhook configuration mention ONLY VITE_WEBHOOK_URL (in English) and never mention VITE_ENDPOINT_A_URL or VITE_ENDPOINT_B_URL.",
+      "reqIds": [
+        "REQ-17"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-11",
+      "summary": "Update and verify environment-variable template/documentation in the project to contain ONLY VITE_WEBHOOK_URL and remove any legacy guidance that mentions VITE_ENDPOINT_A_URL or VITE_ENDPOINT_B_URL.",
+      "reqIds": [
+        "REQ-18"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-13",
+      "summary": "Update the repo-local webhook setup documentation (frontend/WEBHOOK_SETUP.md) to include a copy-paste snippet using the user-provided webhook URL (https://cloud.activepieces.com/api/v1/webhooks/arB5MIDx32mR1vdmBIC0r/sync).",
+      "reqIds": [
+        "REQ-22"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-16",
+      "summary": "Update repo-local webhook setup documentation to include a copy-paste snippet using the exact user-provided webhook URL `https://cloud.activepieces.com/api/v1/webhooks/arB5MIDx32mR1vdmBIC0r/sync`, and ensure all documentation text is in English.",
+      "reqIds": [
+        "REQ-30"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-17",
+      "summary": "Hide/disable the entire 'Ask AI' UI section (including chat input field and the 'Ask AI' button) so it is not visible in the frontend",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-18",
+      "summary": "Quiz option onClick behavior: if user selects incorrect option, mark selected red and simultaneously highlight the correct_answer option green; if user selects correct option, mark it green",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-19",
+      "summary": "Add a dedicated Summary-section Delete button (trash icon) in the top-right of the Summary card that clears only the summary text without affecting the Quiz; visually distinct from the Quiz delete button",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-22",
+      "summary": "Create a new build draft from the updated repository state and run the standard build + deployment pipeline to produce a fresh deployment.",
+      "reqIds": [
+        "REQ-38"
+      ],
+      "status": "pending"
     }
   ],
-  "projectName": "AI-Driven Learning Dashboard UI wired to two ActivePieces webhook endpoints (POST-only, no persistence)",
+  "projectName": "AI-Driven Learning Dashboard UI wired to a single ActivePieces webhook URL (POST-only, no persistence)",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }

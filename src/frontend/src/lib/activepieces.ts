@@ -1,9 +1,9 @@
-import { getEndpointA, getEndpointB } from './env';
+import { getWebhookUrl } from './env';
 import type { UploadResponse, AskAIResponse } from './types';
 
 export async function uploadFile(file: File): Promise<UploadResponse> {
   try {
-    const endpointUrl = getEndpointA();
+    const endpointUrl = getWebhookUrl();
     
     const formData = new FormData();
     formData.append('file', file);
@@ -46,7 +46,7 @@ export async function askAI(
   uploadedNotes: string
 ): Promise<AskAIResponse> {
   try {
-    const endpointUrl = getEndpointB();
+    const endpointUrl = getWebhookUrl();
 
     const response = await fetch(endpointUrl, {
       method: 'POST',
