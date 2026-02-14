@@ -1,0 +1,78 @@
+{
+  "kind": "build_request",
+  "title": "Support single ActivePieces webhook URL with action-based routing for upload vs Ask AI",
+  "priority": "normal",
+  "requirements": [
+    {
+      "id": "REQ-11",
+      "text": "Allow the app to be configured with a single ActivePieces webhook URL for both file upload processing and Ask AI by supporting the case where VITE_ENDPOINT_A_URL and VITE_ENDPOINT_B_URL point to the same URL and by providing a fallback so that if only one of these environment variables is set, the app uses the configured one for both actions.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-6"
+        ],
+        "quotes": [
+          "\"I am using one URL for both, but the backend must handle them as two different 'actions' or 'routes.'\""
+        ]
+      },
+      "acceptanceCriteria": [
+        "If only VITE_ENDPOINT_A_URL is set (and VITE_ENDPOINT_B_URL is empty), file upload and Ask AI requests both use VITE_ENDPOINT_A_URL.",
+        "If only VITE_ENDPOINT_B_URL is set (and VITE_ENDPOINT_A_URL is empty), file upload and Ask AI requests both use VITE_ENDPOINT_B_URL.",
+        "If neither environment variable is set, triggering file upload or Ask AI shows a clear English error message explaining which variable(s) must be set and that one URL may be used for both.",
+        "If both variables are set, the existing behavior remains (A used for upload, B used for Ask AI), including the valid case where they are identical."
+      ]
+    },
+    {
+      "id": "REQ-12",
+      "text": "When calling the single ActivePieces webhook URL, include an explicit action discriminator in the POST request body so the external automation can route the request appropriately: file uploads must send action=\"process_notes\" and expect {summary, quiz_array}; Ask AI must send action=\"ask_ai\" along with user_question and uploaded_notes and expect {ai_answer}.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-6"
+        ],
+        "quotes": [
+          "\"When a file is uploaded, it must return the summary and quiz.\"",
+          "\"When a question is asked via the 'Ask AI' button, it must return the ai_answer based on the notes provided in the request body.\""
+        ]
+      },
+      "acceptanceCriteria": [
+        "The file upload POST (multipart/form-data) includes a field named \"action\" with value \"process_notes\" in addition to the uploaded file.",
+        "The Ask AI POST (application/json) includes a field named \"action\" with value \"ask_ai\" alongside the existing \"user_question\" and \"uploaded_notes\" fields.",
+        "The client-side response validation continues to enforce that uploads return a JSON object containing a non-empty \"summary\" and an array \"quiz_array\", and Ask AI returns a JSON object containing a non-empty \"ai_answer\".",
+        "User-facing error strings remain in English when response validation fails (e.g., invalid response format)."
+      ]
+    },
+    {
+      "id": "REQ-13",
+      "text": "Update the frontend configuration documentation/template to reflect that a single webhook URL can be used for both actions, while still supporting separate URLs, and ensure all guidance is in English.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-4",
+          "msg-6"
+        ],
+        "quotes": [
+          "\"yes.this is my url.   https://cloud.activepieces.com/api/v1/webhooks/arB5MIDx32mR1vdmBIC0r/sync\"",
+          "\"I am using one URL for both...\""
+        ]
+      },
+      "acceptanceCriteria": [
+        "frontend/.env.example includes English comments instructing that users may set both VITE_ENDPOINT_A_URL and VITE_ENDPOINT_B_URL to the same webhook URL to use one URL for both actions, or set only one variable if supported by the fallback.",
+        "No actual user-provided webhook URL value is committed into frontend/.env.example (it remains a template)."
+      ]
+    }
+  ],
+  "constraints": [
+    "Do not edit files under frontend/src/components/ui (read-only UI components).",
+    "Do not modify immutable frontend paths listed in SYSTEM_CONTEXT (e.g., frontend/src/hooks/useInternetIdentity.ts(x), frontend/src/hooks/useActor.ts, frontend/src/main.tsx).",
+    "Backend must remain a single Motoko actor; no new backend services or external databases."
+  ],
+  "nonGoals": [
+    "Implementing or modifying the ActivePieces automation/backend logic that interprets the \"action\" field (this is external to the app).",
+    "Adding additional authentication providers beyond Internet Identity."
+  ],
+  "imageRequirements": {
+    "required": [],
+    "edits": []
+  }
+}

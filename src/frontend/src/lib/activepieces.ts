@@ -1,0 +1,83 @@
+import { getEndpointA, getEndpointB } from './env';
+import type { UploadResponse, AskAIResponse } from './types';
+
+export async function uploadFile(file: File): Promise<UploadResponse> {
+  try {
+    const endpointUrl = getEndpointA();
+    
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('action', 'process_notes');
+
+    const response = await fetch(endpointUrl, {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error(`Upload failed: ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    
+    // Strict validation: summary must be non-empty string, quiz_array must be array
+    if (!data.summary || typeof data.summary !== 'string' || data.summary.trim() === '') {
+      throw new Error('Invalid response format: missing or empty summary');
+    }
+    
+    if (!Array.isArray(data.quiz_array)) {
+      throw new Error('Invalid response format: quiz_array must be an array');
+    }
+
+    return {
+      summary: data.summary,
+      quiz_array: data.quiz_array,
+    };
+  } catch (error) {
+    if (error instanceof Error) {
+      throw error;
+    }
+    throw new Error('Failed to upload file. Please try again.');
+  }
+}
+
+export async function askAI(
+  userQuestion: string,
+  uploadedNotes: string
+): Promise<AskAIResponse> {
+  try {
+    const endpointUrl = getEndpointB();
+
+    const response = await fetch(endpointUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        action: 'ask_ai',
+        user_question: userQuestion,
+        uploaded_notes: uploadedNotes,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`AI request failed: ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    
+    // Strict validation: ai_answer must be non-empty string
+    if (!data.ai_answer || typeof data.ai_answer !== 'string' || data.ai_answer.trim() === '') {
+      throw new Error('Invalid response format: missing or empty ai_answer');
+    }
+
+    return {
+      ai_answer: data.ai_answer,
+    };
+  } catch (error) {
+    if (error instanceof Error) {
+      throw error;
+    }
+    throw new Error('Failed to get AI response. Please try again.');
+  }
+}

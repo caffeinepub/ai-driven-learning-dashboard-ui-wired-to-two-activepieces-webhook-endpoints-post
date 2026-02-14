@@ -1,0 +1,66 @@
+{
+  "kind": "implementation_plan",
+  "version": "1.0",
+  "title": "Single ActivePieces webhook URL with action-based routing (upload vs Ask AI)",
+  "requirements": [
+    {
+      "id": "REQ-11",
+      "summary": "Support a single configurable ActivePieces webhook URL with fallback behavior when only one of VITE_ENDPOINT_A_URL / VITE_ENDPOINT_B_URL is set, while keeping current behavior when both are set (even if identical).",
+      "acceptanceCriteria": [
+        "If only VITE_ENDPOINT_A_URL is set (and VITE_ENDPOINT_B_URL is empty), file upload and Ask AI requests both use VITE_ENDPOINT_A_URL.",
+        "If only VITE_ENDPOINT_B_URL is set (and VITE_ENDPOINT_A_URL is empty), file upload and Ask AI requests both use VITE_ENDPOINT_B_URL.",
+        "If neither environment variable is set, triggering file upload or Ask AI shows a clear English error message explaining which variable(s) must be set and that one URL may be used for both.",
+        "If both variables are set, the existing behavior remains (A used for upload, B used for Ask AI), including the valid case where they are identical."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/lib/env.ts",
+          "operation": "modify",
+          "description": "Add shared webhook URL resolution with fallback logic: (1) if both A and B are set, keep current mapping (upload uses A, Ask AI uses B); (2) if only one is set, use it for both actions; (3) if neither is set, throw a clear English error explaining that at least one of VITE_ENDPOINT_A_URL or VITE_ENDPOINT_B_URL must be configured and that one URL can be used for both actions."
+        },
+        {
+          "path": "frontend/src/lib/activepieces.ts",
+          "operation": "modify",
+          "description": "Switch upload and Ask AI calls to use the new env resolution so both actions can safely target the same webhook URL when configured (or when only one env var is set). Ensure any thrown configuration errors remain clear and user-facing strings remain English."
+        }
+      ]
+    },
+    {
+      "id": "REQ-12",
+      "summary": "Include an explicit action discriminator in ActivePieces POST bodies for upload vs Ask AI, and keep strict client-side response validation with English errors.",
+      "acceptanceCriteria": [
+        "The file upload POST (multipart/form-data) includes a field named \"action\" with value \"process_notes\" in addition to the uploaded file.",
+        "The Ask AI POST (application/json) includes a field named \"action\" with value \"ask_ai\" alongside the existing \"user_question\" and \"uploaded_notes\" fields.",
+        "The client-side response validation continues to enforce that uploads return a JSON object containing a non-empty \"summary\" and an array \"quiz_array\", and Ask AI returns a JSON object containing a non-empty \"ai_answer\".",
+        "User-facing error strings remain in English when response validation fails (e.g., invalid response format)."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/lib/activepieces.ts",
+          "operation": "modify",
+          "description": "Update request bodies to include action discriminator: (a) upload multipart form data adds field action=\"process_notes\" along with file; (b) Ask AI JSON body includes action=\"ask_ai\" alongside user_question and uploaded_notes. Keep/strengthen response validation to require non-empty summary + quiz_array for uploads and non-empty ai_answer for Ask AI, with English error messages on validation failures."
+        },
+        {
+          "path": "frontend/src/lib/types.ts",
+          "operation": "modify",
+          "description": "If needed to support stricter validation typing, refine/confirm response types (UploadResponse and AskAIResponse) remain aligned with the validated shapes: upload expects {summary, quiz_array}; Ask AI expects {ai_answer}. (No UI changes; types only.)"
+        }
+      ]
+    },
+    {
+      "id": "REQ-13",
+      "summary": "Update frontend environment configuration template documentation to explain single-URL usage and fallback behavior in English without committing any real webhook URL.",
+      "acceptanceCriteria": [
+        "frontend/.env.example includes English comments instructing that users may set both VITE_ENDPOINT_A_URL and VITE_ENDPOINT_B_URL to the same webhook URL to use one URL for both actions, or set only one variable if supported by the fallback.",
+        "No actual user-provided webhook URL value is committed into frontend/.env.example (it remains a template)."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/.env.example",
+          "operation": "modify",
+          "description": "Update English comments to document that a single ActivePieces webhook URL may be used for both actions by (1) setting both VITE_ENDPOINT_A_URL and VITE_ENDPOINT_B_URL to the same value, or (2) setting only one of them (the app will fall back and use the configured one for both). Keep the values blank (template only) and do not include any real user webhook URL."
+        }
+      ]
+    }
+  ]
+}

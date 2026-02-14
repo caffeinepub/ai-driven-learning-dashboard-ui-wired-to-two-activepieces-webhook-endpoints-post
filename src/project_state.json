@@ -1,0 +1,166 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 5,
+  "summary": "AI-Driven Learning Dashboard: React frontend dashboard where Summary and Quiz are populated from an ActivePieces webhook response after file upload, and Ask AI uses the same webhook on-demand but with a different action to fetch only ai_answer. No database/Supabase persistence; UI updates from local state without refresh. All backend interactions via POST.",
+  "architectural_notes": [
+    "Backend is ActivePieces automation; frontend integrates via webhooks (URLs provided later).",
+    "Summary/Quiz/AI Answer must be derived strictly from backend responses; no DB/Supabase persistence; store in local React state.",
+    "Ask AI requests must include user_question plus uploaded_notes/context.",
+    "Frontend will use one webhook URL for both flows; requests must include an action/type field so backend can route: file upload => summary+quiz, Ask AI => ai_answer."
+  ],
+  "known_issues": [],
+  "isFixRequest": false,
+  "existing_features": [
+    {
+      "id": "feature-implement-a-configuration-mechanism-for-two-external-activepieces-webhook-urls-endpoint-a-for-file-processing-endpoint-b-for-ask-ai-without-hardcoding-them-use-environment-variables-e-g-vite-endpoint-a-url-and-vite-endpoint-b-url-and-show-a-clear-user-facing-error-in-english-if-either-url-is-missing-when-an-action-is-triggered",
+      "title": "Implement a configuration mechanism for two external ActivePieces webhook URLs (Endpoint A for file processing; Endpoint B for Ask AI) without hardcoding them. Use environment variables (e.g., VITE_ENDPOINT_A_URL and VITE_ENDPOINT_B_URL) and show a clear, user-facing error in English if either URL is missing when an action is triggered.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-build-the-main-dashboard-page-that-updates-purely-from-in-memory-react-state-no-database-supabase-and-renders-summary-quiz-immediately-after-a-successful-file-upload-response-without-page-refresh",
+      "title": "Build the main dashboard page that updates purely from in-memory React state (no database/Supabase) and renders Summary + Quiz immediately after a successful file-upload response without page refresh.",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-the-file-upload-flow-that-sends-a-post-request-to-endpoint-a-with-the-uploaded-notes-file-and-parses-the-json-response-containing-a-summary-string-and-a-quiz-array-store-summary-and-quiz-array-in-local-state-for-rendering",
+      "title": "Implement the file upload flow that sends a POST request to Endpoint A with the uploaded notes file and parses the JSON response containing a summary string and a quiz_array. Store summary and quiz_array in local state for rendering.",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-render-the-summary-section-as-a-clean-readable-container-that-displays-the-summary-string-from-the-endpoint-a-response",
+      "title": "Render the Summary section as a clean, readable container that displays the summary string from the Endpoint A response.",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-the-interactive-quiz-component-that-consumes-quiz-array-items-shaped-like-question-string-options-a-b-c-d-correct-answer-string-display-questions-in-a-top-to-bottom-list-with-a-b-c-d-as-vertical-buttons-and-provide-per-question-answer-validation-feedback",
+      "title": "Implement the Interactive Quiz component that consumes quiz_array items shaped like {\"question\": string, \"options\": [\"A\",\"B\",\"C\",\"D\"], \"correct_answer\": string}. Display questions in a top-to-bottom list with A/B/C/D as vertical buttons and provide per-question answer validation feedback.",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-quiz-management-controls-a-view-toggle-to-show-hide-the-quiz-list-and-a-delete-action-that-removes-the-quiz-content-from-local-state-immediately",
+      "title": "Add quiz management controls: a View toggle to show/hide the quiz list and a Delete action that removes the quiz content from local state immediately.",
+      "reqIds": [
+        "REQ-6"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-the-ask-ai-module-that-uses-endpoint-b-as-a-separate-on-demand-post-request-the-request-must-include-user-question-plus-the-uploaded-notes-context-derived-from-the-previously-uploaded-file-content-or-stored-text-context-and-the-response-must-include-only-ai-answer-which-is-then-rendered-in-the-ui",
+      "title": "Implement the \"Ask AI\" module that uses Endpoint B as a separate, on-demand POST request. The request must include user_question plus the uploaded_notes context (derived from the previously uploaded file content or stored text context), and the response must include only ai_answer which is then rendered in the UI.",
+      "reqIds": [
+        "REQ-7"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-loading-and-reset-behaviors-for-ask-ai-show-an-english-loading-state-exact-text-ai-is-thinking-while-awaiting-endpoint-b-include-a-delete-clear-button-that-clears-the-ai-answer-and-resets-the-input-field-immediately",
+      "title": "Add loading and reset behaviors for Ask AI: show an English loading state (exact text: \"AI is thinking...\") while awaiting Endpoint B; include a Delete/Clear button that clears the ai_answer and resets the input field immediately.",
+      "reqIds": [
+        "REQ-8"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-a-coherent-minimalist-modern-responsive-visual-theme-not-blue-purple-and-apply-it-consistently-across-auth-screens-and-the-dashboard-typography-spacing-card-styles-buttons-states-for-success-error-loading",
+      "title": "Create a coherent minimalist, modern, responsive visual theme (not blue/purple) and apply it consistently across Auth screens and the Dashboard (typography, spacing, card styles, buttons, states for success/error/loading).",
+      "reqIds": [
+        "REQ-9"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-authentication-ux-using-internet-identity-supported-on-the-internet-computer-instead-of-username-password-google-oauth-email-verification-and-password-reset-provide-a-single-sign-in-sign-out-flow-and-gate-the-dashboard-behind-authentication",
+      "title": "Implement authentication UX using Internet Identity (supported on the Internet Computer) instead of username/password, Google OAuth, email verification, and password reset. Provide a single sign-in/sign-out flow and gate the dashboard behind authentication.",
+      "reqIds": [
+        "REQ-10"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-allow-the-app-to-be-configured-with-a-single-activepieces-webhook-url-for-both-file-upload-processing-and-ask-ai-by-supporting-the-case-where-vite-endpoint-a-url-and-vite-endpoint-b-url-point-to-the-same-url-and-by-providing-a-fallback-so-that-if-only-one-of-these-environment-variables-is-set-the-app-uses-the-configured-one-for-both-actions",
+      "title": "Allow the app to be configured with a single ActivePieces webhook URL for both file upload processing and Ask AI by supporting the case where VITE_ENDPOINT_A_URL and VITE_ENDPOINT_B_URL point to the same URL and by providing a fallback so that if only one of these environment variables is set, the app uses the configured one for both actions.",
+      "reqIds": [
+        "REQ-11"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-when-calling-the-single-activepieces-webhook-url-include-an-explicit-action-discriminator-in-the-post-request-body-so-the-external-automation-can-route-the-request-appropriately-file-uploads-must-send-action-process-notes-and-expect-summary-quiz-array-ask-ai-must-send-action-ask-ai-along-with-user-question-and-uploaded-notes-and-expect-ai-answer",
+      "title": "When calling the single ActivePieces webhook URL, include an explicit action discriminator in the POST request body so the external automation can route the request appropriately: file uploads must send action=\"process_notes\" and expect {summary, quiz_array}; Ask AI must send action=\"ask_ai\" along with user_question and uploaded_notes and expect {ai_answer}.",
+      "reqIds": [
+        "REQ-12"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-frontend-configuration-documentation-template-to-reflect-that-a-single-webhook-url-can-be-used-for-both-actions-while-still-supporting-separate-urls-and-ensure-all-guidance-is-in-english",
+      "title": "Update the frontend configuration documentation/template to reflect that a single webhook URL can be used for both actions, while still supporting separate URLs, and ensure all guidance is in English.",
+      "reqIds": [
+        "REQ-13"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "Build React dashboard UI that populates Summary + Quiz from backend response immediately after file upload (no refresh, local state only)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "Implement file upload flow that POSTs to Endpoint A and receives summary + quiz_array response",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-3",
+      "summary": "Implement Ask AI module that POSTs user_question + uploaded_notes to separate Endpoint B and displays returned ai_answer with loading + clear actions",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-4",
+      "summary": "Interactive Quiz component: parse quiz JSON, render vertical list of questions/options, validate correct/incorrect with button color feedback, plus view toggle and delete-from-state",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-5",
+      "summary": "Auth UI flows: login/signup with email verification gating activation, Google OAuth option, and forgot-password reset UI",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-6",
+      "summary": "Enforce no database persistence for summary/quiz/ai content (disconnect Supabase/DB); only use backend responses into frontend state",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-7",
+      "summary": "Support using a single ActivePieces webhook URL for both file upload and Ask AI by sending an explicit action/type in the POST body (e.g., process_notes vs ask_ai) and parsing responses accordingly",
+      "reqIds": [],
+      "status": "pending"
+    }
+  ],
+  "projectName": "AI-Driven Learning Dashboard UI wired to two ActivePieces webhook endpoints (POST-only, no persistence)",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
+}

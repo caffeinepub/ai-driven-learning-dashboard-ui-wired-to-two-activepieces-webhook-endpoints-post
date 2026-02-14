@@ -1,0 +1,31 @@
+{
+  "kind": "spec_vs_diff_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-14T02:00:10.838Z",
+  "summary": "All three requested frontend requirements (single-URL fallback for A/B endpoints, action discriminator fields for upload vs Ask AI with strict response validation, and updated English .env.example guidance) appear to be implemented in the modified files. Two additional non-requested metadata/documentation summary files were also modified.",
+  "missing_requirements": [],
+  "hallucinated_features": [
+    {
+      "description": "Updated/maintained a repository-level frontend file summary document (not requested by the BuildRequest).",
+      "reason": "The BuildRequest only asked for runtime behavior changes (REQ-11, REQ-12) and updating frontend/.env.example (REQ-13). No requirement mentions changing a separate file summary artifact.",
+      "evidence": [
+        "frontend-file-summaries.txt"
+      ]
+    },
+    {
+      "description": "Modified project state/metadata JSON describing features and project summary (not requested by the BuildRequest).",
+      "reason": "The BuildRequest does not request any changes to project_state.json; it focuses on frontend env fallback, request payload changes, and .env.example documentation.",
+      "evidence": [
+        "project_state.json"
+      ]
+    }
+  ],
+  "confidence": 0.78,
+  "changed_files": [
+    "frontend-file-summaries.txt",
+    "frontend/.env.example",
+    "frontend/src/lib/activepieces.ts",
+    "frontend/src/lib/env.ts",
+    "project_state.json"
+  ]
+}

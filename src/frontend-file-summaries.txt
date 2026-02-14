@@ -1,0 +1,17 @@
+{
+  "frontend/src/App.tsx": "Main application component that handles authentication state and conditionally renders SignInPage or DashboardPage based on Internet Identity authentication status.",
+  "frontend/src/pages/SignInPage.tsx": "Authentication page with Internet Identity sign-in button, loading states, error handling, and branded layout with footer attribution.",
+  "frontend/src/pages/DashboardPage.tsx": "Main dashboard page managing all application state (summary, quiz, AI answer, uploaded notes) in local React state and coordinating file upload, quiz display, and Ask AI interactions without any database persistence.",
+  "frontend/src/components/layout/AppShell.tsx": "Reusable layout wrapper providing consistent header with branding and sign-out button, main content area, and footer with caffeine.ai attribution.",
+  "frontend/src/components/FileUpload.tsx": "File upload component with drag-and-drop support, file selection UI, upload progress indication, and clear file functionality.",
+  "frontend/src/components/SummaryCard.tsx": "Presentational component displaying the summary text from backend response in a clean card layout with empty state handling.",
+  "frontend/src/components/Quiz/QuizSection.tsx": "Quiz management wrapper providing view toggle and delete controls for the quiz array, composing the InteractiveQuiz component.",
+  "frontend/src/components/Quiz/InteractiveQuiz.tsx": "Interactive quiz component rendering questions with vertically-stacked A/B/C/D option buttons, per-question answer validation with green (correct) and red (incorrect) visual feedback.",
+  "frontend/src/components/AskAI/AskAIModule.tsx": "Ask AI interface with question input, submit button showing \"AI is thinking...\" loading state, answer display area, clear functionality, and context requirement validation.",
+  "frontend/src/lib/types.ts": "TypeScript type definitions for QuizItem, UploadResponse, and AskAIResponse matching the backend JSON schema.",
+  "frontend/src/lib/env.ts": "Environment variable accessor functions with fallback logic - if only one of VITE_ENDPOINT_A_URL or VITE_ENDPOINT_B_URL is set, both getEndpointA() and getEndpointB() will use that URL, enabling single-URL configuration for both actions.",
+  "frontend/src/lib/activepieces.ts": "API client functions for ActivePieces webhooks with action discriminators - uploadFile sends multipart form data with action=\"process_notes\", askAI sends JSON with action=\"ask_ai\", both include strict response validation with English error messages.",
+  "frontend/.env.example": "Environment variable template documenting that users can set both VITE_ENDPOINT_A_URL and VITE_ENDPOINT_B_URL to the same webhook URL or set only one variable for single-URL configuration, with explanation of action-based routing.",
+  "frontend/src/index.css": "Global styles with OKLCH color system using a teal/cyan primary palette (hue 160) instead of blue/purple, with light and dark mode support and consistent design tokens.",
+  "frontend/tailwind.config.js": "Tailwind configuration extending the theme with Inter font family, OKLCH color tokens, custom border radius, soft shadows, and animation utilities."
+}

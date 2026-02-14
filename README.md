@@ -1,2 +1,3 @@
-# ai-driven-learning-dashboard-ui-wired-to-two-activepieces-webhook-endpoints-post
-Exported from Caffeine project: AI-Driven Learning Dashboard UI wired to two ActivePieces webhook endpoints (POST-only, no persistence)
+## 
+
+To run app build and run docker image: `docker build -t app . docker run -it --network host app`
