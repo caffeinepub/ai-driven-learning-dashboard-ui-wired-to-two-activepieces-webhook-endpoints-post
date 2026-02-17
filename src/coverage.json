@@ -1,47 +1,41 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-14T11:39:21.948Z",
+  "generatedAt": "2026-02-17T10:02:14.721Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 3,
+    "total": 2,
     "implemented": 2,
     "items": [
       {
-        "id": "REQ-36",
-        "summary": "Implement (or re-implement) the dedicated Summary Delete control as a trash icon button in the top-right corner of the Summary card. When clicked, it must clear ONLY the Summary text (set summary state to an empty string) and must not modify the Quiz section/state in any way.",
+        "id": "REQ-1",
+        "summary": "Increase the generated summary length so that uploaded notes produce a noticeably longer, more informative summary (especially in offline processing) and ensure the dashboard renders the full returned summary text without truncation.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/components/SummaryCard.tsx"
+          "frontend/src/lib/offlineNoteProcessing.ts",
+          "frontend/src/components/SummaryCard.tsx",
+          "frontend/src/pages/DashboardPage.tsx"
         ],
         "matchedFiles": [
+          "frontend/src/lib/offlineNoteProcessing.ts",
           "frontend/src/components/SummaryCard.tsx"
         ]
       },
       {
-        "id": "REQ-37",
-        "summary": "Wire the Summary Delete button into Dashboard state management by adding a Summary delete handler in the Dashboard page and passing it into the SummaryCard component via props, without changing the existing Quiz delete handler or QuizSection behavior.",
+        "id": "REQ-2",
+        "summary": "Fix quiz generation/data handling so the Interactive Quiz displays 10 questions when enough source text exists, and do not inadvertently limit the rendered quiz list to fewer items.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/pages/DashboardPage.tsx",
-          "frontend/src/components/SummaryCard.tsx"
+          "frontend/src/lib/offlineNoteProcessing.ts",
+          "frontend/src/components/Quiz/QuizSection.tsx",
+          "frontend/src/components/Quiz/InteractiveQuiz.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/pages/DashboardPage.tsx",
-          "frontend/src/components/SummaryCard.tsx"
+          "frontend/src/lib/offlineNoteProcessing.ts"
         ]
-      },
-      {
-        "id": "REQ-38",
-        "summary": "Create a new build draft from the updated repository state and run the standard build + deployment pipeline to produce a fresh deployment.",
-        "status": "missing",
-        "plannedFiles": [
-          "frontend/DEPLOYMENT.md"
-        ],
-        "matchedFiles": []
       }
     ]
   },
@@ -51,7 +45,7 @@
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
     "frontend/src/components/SummaryCard.tsx",
-    "frontend/src/pages/DashboardPage.tsx",
+    "frontend/src/lib/offlineNoteProcessing.ts",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

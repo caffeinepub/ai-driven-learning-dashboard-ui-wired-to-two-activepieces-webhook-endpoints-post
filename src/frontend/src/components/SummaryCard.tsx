@@ -42,7 +42,7 @@ export default function SummaryCard({ summary, onDelete }: SummaryCardProps) {
       </CardHeader>
       <CardContent>
         <div className="prose prose-sm max-w-none dark:prose-invert">
-          <p className="whitespace-pre-wrap leading-relaxed">{summary}</p>
+          <p className="whitespace-pre-wrap break-words leading-relaxed">{summary}</p>
         </div>
       </CardContent>
     </Card>

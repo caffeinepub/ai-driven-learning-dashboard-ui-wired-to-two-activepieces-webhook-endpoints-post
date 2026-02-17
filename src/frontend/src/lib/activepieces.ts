@@ -1,9 +1,15 @@
 import { getWebhookUrl } from './env';
+import { processFileOffline } from './offlineNoteProcessing';
 import type { UploadResponse, AskAIResponse } from './types';
 
 export async function uploadFile(file: File): Promise<UploadResponse> {
   try {
     const endpointUrl = getWebhookUrl();
+    
+    // If no webhook is configured, use offline processing
+    if (!endpointUrl) {
+      return await processFileOffline(file);
+    }
     
     const formData = new FormData();
     formData.append('file', file);
@@ -47,6 +53,11 @@ export async function askAI(
 ): Promise<AskAIResponse> {
   try {
     const endpointUrl = getWebhookUrl();
+    
+    // If no webhook is configured, provide a helpful message
+    if (!endpointUrl) {
+      throw new Error('AI question answering requires a webhook URL to be configured. This feature is not available in offline mode.');
+    }
 
     const response = await fetch(endpointUrl, {
       method: 'POST',

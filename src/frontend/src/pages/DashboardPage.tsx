@@ -4,9 +4,7 @@ import AppShell from '../components/layout/AppShell';
 import FileUpload from '../components/FileUpload';
 import SummaryCard from '../components/SummaryCard';
 import QuizSection from '../components/Quiz/QuizSection';
-import WebhookSetupHelpPanel from '../components/WebhookSetupHelpPanel';
 import { uploadFile } from '../lib/activepieces';
-import { MISSING_WEBHOOK_ERROR } from '../lib/env';
 import type { QuizItem } from '../lib/types';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertCircle } from 'lucide-react';
@@ -22,8 +20,6 @@ export default function DashboardPage() {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string>('');
 
-  const isUploadWebhookError = uploadError === MISSING_WEBHOOK_ERROR;
-
   const handleFileUpload = async (file: File) => {
     setIsUploading(true);
     setUploadError('');
@@ -33,7 +29,8 @@ export default function DashboardPage() {
       setSummary(result.summary);
       setQuizArray(result.quiz_array);
     } catch (error) {
-      setUploadError(error instanceof Error ? error.message : 'Failed to upload file');
+      const errorMessage = error instanceof Error ? error.message : 'Failed to upload file';
+      setUploadError(errorMessage);
     } finally {
       setIsUploading(false);
     }
@@ -45,16 +42,6 @@ export default function DashboardPage() {
 
   const handleDeleteQuiz = () => {
     setQuizArray([]);
-  };
-
-  const handleWebhookSaved = () => {
-    // Clear errors when webhook is saved so user can retry
-    setUploadError('');
-  };
-
-  const handleWebhookCleared = () => {
-    // When webhook is cleared, show the configuration error again
-    setUploadError(MISSING_WEBHOOK_ERROR);
   };
 
   return (
@@ -69,17 +56,11 @@ export default function DashboardPage() {
             disabled={isUploading}
           />
           {uploadError && (
-            <div className="mt-4 space-y-4">
+            <div className="mt-4">
               <Alert variant="destructive">
                 <AlertCircle className="h-4 w-4" />
                 <AlertDescription>{uploadError}</AlertDescription>
               </Alert>
-              {isUploadWebhookError && (
-                <WebhookSetupHelpPanel 
-                  onWebhookSaved={handleWebhookSaved}
-                  onWebhookCleared={handleWebhookCleared}
-                />
-              )}
             </div>
           )}
         </section>

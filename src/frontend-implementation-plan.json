@@ -1,60 +1,57 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Summary delete trash icon control wired to Dashboard state and fresh deploy draft guidance",
+  "title": "Fix offline summary length/rendering and ensure quiz renders up to 10 questions",
   "requirements": [
     {
-      "id": "REQ-36",
-      "summary": "Add a dedicated Summary Delete trash icon button in the Summary card header that clears only the Summary text without affecting the Quiz state.",
+      "id": "REQ-1",
+      "summary": "Make offline summaries substantially longer and ensure the dashboard displays the full returned summary with preserved formatting (no truncation).",
       "acceptanceCriteria": [
-        "When a summary is displayed, the Summary card shows a trash icon button positioned in the card’s top-right corner (inside the card header area).",
-        "Clicking the trash icon clears the summary content by setting the Summary state to an empty string, and the Summary section no longer renders (since the dashboard currently only renders the Summary section when `summary` is truthy).",
-        "Clicking the Summary delete control does not change `quizArray` state; any rendered Quiz section remains visible and unchanged.",
-        "The existing Quiz delete button continues to delete only the quiz content and does not affect the Summary state.",
-        "All user-facing text remains in English."
+        "When uploading a non-trivial PDF/TXT/MD file with substantial text, the displayed summary contains substantially more content than the current output (i.e., not just a very short excerpt).",
+        "Summary rendering preserves line breaks/paragraphs and does not truncate or collapse content in the UI (the full summary string returned by processing is visible).",
+        "Offline mode (no webhook URL configured) produces a longer summary than before for the same input file."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/SummaryCard.tsx",
+          "path": "frontend/src/lib/offlineNoteProcessing.ts",
           "operation": "modify",
-          "description": "Implement the Summary Delete control UI as a trash icon button placed in the Summary card header top-right (use shadcn-ui Button styling for an icon action and lucide-react trash icon). Ensure it only triggers a provided callback and does not touch any quiz state. Verify the component's usage instructions before implementing."
-        }
-      ]
-    },
-    {
-      "id": "REQ-37",
-      "summary": "Wire Summary deletion into Dashboard state via a dedicated handler and pass it to SummaryCard via props without changing Quiz deletion behavior.",
-      "acceptanceCriteria": [
-        "`frontend/src/pages/DashboardPage.tsx` includes a dedicated handler that clears only the summary state (e.g., `setSummary('')`).",
-        "`frontend/src/components/SummaryCard.tsx` accepts an `onDelete` (or equivalent) callback prop and calls it when the trash icon button is clicked.",
-        "No changes are made that couple Summary deletion to Quiz deletion (e.g., Summary deletion must not call `setQuizArray([])`)."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/pages/DashboardPage.tsx",
-          "operation": "modify",
-          "description": "Add a dedicated Summary delete handler that clears only `summary` state and pass it into SummaryCard (e.g., `onDelete`). Keep the existing quiz delete handler and QuizSection wiring unchanged."
+          "description": "Improve offline summary generation to be noticeably longer and more informative by using paragraph/sentence-aware extraction, higher length targets (more characters/sections), and better handling of single-line PDFs so summaries are not overly short in offline mode."
         },
         {
           "path": "frontend/src/components/SummaryCard.tsx",
           "operation": "modify",
-          "description": "Update props to accept an `onDelete` callback and call it from the new trash icon button; do not introduce any coupling to quiz deletion. Verify the component's usage instructions before implementing."
+          "description": "Ensure the summary UI renders the entire summary string without any visual truncation and preserves line breaks/paragraphs (e.g., render in a block element with whitespace-preserving wrapping and safe long-word breaking). Use existing shadcn-ui Card styling already in place; verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/pages/DashboardPage.tsx",
+          "operation": "modify",
+          "description": "Verify summary state is passed through unchanged and that the Summary section does not apply any limiting container styles; adjust layout only as needed to keep the full returned summary visible on the dashboard."
         }
       ]
     },
     {
-      "id": "REQ-38",
-      "summary": "Update deployment guidance to ensure a fresh build draft and successful frontend build/deploy can be produced from the updated repo state.",
+      "id": "REQ-2",
+      "summary": "Fix offline quiz generation/data handling so the Interactive Quiz shows up to 10 questions when sufficient source text exists and renders all returned items with correct counts.",
       "acceptanceCriteria": [
-        "A new build draft is created successfully (no “You don’t have a draft yet” deployment error).",
-        "The build passes TypeScript compilation and the frontend build step.",
-        "A fresh deployment is produced and is accessible at the generated deployment URL(s)."
+        "In offline mode, when the uploaded document has sufficient content, the returned quiz_array contains 10 items and the UI displays “Quiz (10 questions)”.",
+        "The quiz UI renders all items in quizArray (no slicing/hidden limiting), and the question numbering runs from 1 to the full length of quizArray.",
+        "If fewer than 10 questions are available due to insufficient source content, the UI still renders all returned questions and the displayed count matches quizArray.length."
       ],
       "file_operations": [
         {
-          "path": "frontend/DEPLOYMENT.md",
+          "path": "frontend/src/lib/offlineNoteProcessing.ts",
           "operation": "modify",
-          "description": "Revise the deployment instructions to explicitly cover creating a new build draft from the current repository state and verifying the TypeScript + frontend build steps complete successfully before/after deployment (include mention of avoiding the “You don’t have a draft yet” scenario)."
+          "description": "Adjust offline quiz generation to reliably produce up to 10 questions when content is sufficient (e.g., add robust fallback question generation from headings/keywords/sentences and only return fewer when the source text is genuinely too small), ensuring quiz_array length aligns with the available content."
+        },
+        {
+          "path": "frontend/src/components/Quiz/QuizSection.tsx",
+          "operation": "modify",
+          "description": "Ensure the displayed quiz count always reflects quizArray.length and confirm no UI logic limits the rendered list. Continue using existing shadcn-ui Card/Button components; verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/Quiz/InteractiveQuiz.tsx",
+          "operation": "modify",
+          "description": "Confirm the quiz renderer maps over the full quizArray without slicing/limiting and that numbering always runs 1..quizArray.length; adjust only if any hidden limiting behavior is discovered."
         }
       ]
     }

@@ -2,10 +2,11 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-implement-or-re-implement-the-dedicated-summary-delete-control-as-a-trash-icon-button-in-the-top-right-corner-of-the-summary-card-when-clicked-it-must-clear-only-the-summary-text-set-summary-state-to-an-empty-string-and-must-not-modify-the-quiz-section-state-in-any-way",
-      "featureTitle": "Implement (or re-implement) the dedicated Summary Delete control as a trash icon button in the top-right corner of the Summary card. When clicked, it must clear ONLY the Summary text (set summary state to an empty string) and must not modify the Quiz section/state in any way.",
+      "featureId": "feature-increase-the-generated-summary-length-so-that-uploaded-notes-produce-a-noticeably-longer-more-informative-summary-especially-in-offline-processing-and-ensure-the-dashboard-renders-the-full-returned-summary-text-without-truncation",
+      "featureTitle": "Increase the generated summary length so that uploaded notes produce a noticeably longer, more informative summary (especially in offline processing) and ensure the dashboard renders the full returned summary text without truncation.",
       "files": [
-        "frontend/src/components/SummaryCard.tsx"
+        "frontend/src/components/SummaryCard.tsx",
+        "frontend/src/lib/offlineNoteProcessing.ts"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -15,16 +16,15 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-36"
+        "REQ-1"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-wire-the-summary-delete-button-into-dashboard-state-management-by-adding-a-summary-delete-handler-in-the-dashboard-page-and-passing-it-into-the-summarycard-component-via-props-without-changing-the-existing-quiz-delete-handler-or-quizsection-behavior",
-      "featureTitle": "Wire the Summary Delete button into Dashboard state management by adding a Summary delete handler in the Dashboard page and passing it into the SummaryCard component via props, without changing the existing Quiz delete handler or QuizSection behavior.",
+      "featureId": "feature-fix-quiz-generation-data-handling-so-the-interactive-quiz-displays-10-questions-when-enough-source-text-exists-and-do-not-inadvertently-limit-the-rendered-quiz-list-to-fewer-items",
+      "featureTitle": "Fix quiz generation/data handling so the Interactive Quiz displays 10 questions when enough source text exists, and do not inadvertently limit the rendered quiz list to fewer items.",
       "files": [
-        "frontend/src/components/SummaryCard.tsx",
-        "frontend/src/pages/DashboardPage.tsx"
+        "frontend/src/lib/offlineNoteProcessing.ts"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -34,7 +34,7 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-37"
+        "REQ-2"
       ],
       "confidence": "high"
     }

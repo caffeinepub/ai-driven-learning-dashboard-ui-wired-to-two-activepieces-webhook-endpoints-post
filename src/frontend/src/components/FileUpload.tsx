@@ -67,7 +67,7 @@ export default function FileUpload({ onFileSelect, isUploading, disabled }: File
             type="file"
             onChange={handleFileChange}
             className="hidden"
-            accept=".txt,.pdf,.doc,.docx,.md"
+            accept=".pdf,.txt,.md"
             disabled={disabled}
           />
 
@@ -116,6 +116,9 @@ export default function FileUpload({ onFileSelect, isUploading, disabled }: File
                 <p className="text-lg font-medium">Drop your notes here</p>
                 <p className="text-sm text-muted-foreground">
                   or click to browse files
+                </p>
+                <p className="mt-2 text-xs text-muted-foreground">
+                  Accepted file types: PDF, Text, Markdown (.pdf, .txt, .md)
                 </p>
               </div>
               <Button

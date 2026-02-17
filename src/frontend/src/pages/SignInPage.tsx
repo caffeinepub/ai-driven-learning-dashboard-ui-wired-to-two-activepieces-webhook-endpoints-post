@@ -12,7 +12,7 @@ export default function SignInPage() {
         <div className="rounded-2xl bg-primary p-3">
           <GraduationCap className="h-8 w-8 text-primary-foreground" />
         </div>
-        <h1 className="text-3xl font-bold tracking-tight">AI Learning Dashboard</h1>
+        <h1 className="text-3xl font-bold tracking-tight">AI Learning Coach</h1>
       </div>
 
       <Card className="w-full max-w-md">
@@ -56,7 +56,7 @@ export default function SignInPage() {
           Built with ❤️ using{' '}
           <a
             href={`https://caffeine.ai/?utm_source=Caffeine-footer&utm_medium=referral&utm_content=${encodeURIComponent(
-              typeof window !== 'undefined' ? window.location.hostname : 'ai-learning-dashboard'
+              typeof window !== 'undefined' ? window.location.hostname : 'ai-learning-coach'
             )}`}
             target="_blank"
             rel="noopener noreferrer"
@@ -65,7 +65,7 @@ export default function SignInPage() {
             caffeine.ai
           </a>
         </p>
-        <p className="mt-1">© {new Date().getFullYear()} AI Learning Dashboard</p>
+        <p className="mt-1">© {new Date().getFullYear()} AI Learning Coach</p>
       </footer>
     </div>
   );

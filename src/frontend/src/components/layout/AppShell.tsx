@@ -15,7 +15,7 @@ export default function AppShell({ children, onSignOut }: AppShellProps) {
             <div className="rounded-xl bg-primary p-2">
               <GraduationCap className="h-5 w-5 text-primary-foreground" />
             </div>
-            <h1 className="text-xl font-bold">AI Learning Dashboard</h1>
+            <h1 className="text-xl font-bold">AI Learning Coach</h1>
           </div>
           
           <Button
@@ -40,7 +40,7 @@ export default function AppShell({ children, onSignOut }: AppShellProps) {
             Built with ❤️ using{' '}
             <a
               href={`https://caffeine.ai/?utm_source=Caffeine-footer&utm_medium=referral&utm_content=${encodeURIComponent(
-                typeof window !== 'undefined' ? window.location.hostname : 'ai-learning-dashboard'
+                typeof window !== 'undefined' ? window.location.hostname : 'ai-learning-coach'
               )}`}
               target="_blank"
               rel="noopener noreferrer"
@@ -49,7 +49,7 @@ export default function AppShell({ children, onSignOut }: AppShellProps) {
               caffeine.ai
             </a>
           </p>
-          <p className="mt-1">© {new Date().getFullYear()} AI Learning Dashboard</p>
+          <p className="mt-1">© {new Date().getFullYear()} AI Learning Coach</p>
         </div>
       </footer>
     </div>

@@ -1,87 +1,58 @@
 {
   "kind": "build_request",
-  "title": "Re-generate Summary Delete button implementation and produce a fresh deployable draft",
+  "title": "Fix short summary output and ensure quiz shows up to 10 questions",
+  "projectName": "Notes Quizzer",
   "priority": "normal",
   "requirements": [
     {
-      "id": "REQ-36",
-      "text": "Implement (or re-implement) the dedicated Summary Delete control as a trash icon button in the top-right corner of the Summary card. When clicked, it must clear ONLY the Summary text (set summary state to an empty string) and must not modify the Quiz section/state in any way.",
+      "id": "REQ-1",
+      "text": "Increase the generated summary length so that uploaded notes produce a noticeably longer, more informative summary (especially in offline processing) and ensure the dashboard renders the full returned summary text without truncation.",
       "target": "frontend",
       "source": {
         "messageIds": [
           "msg-1"
         ],
         "quotes": [
-          "re‑generate the code for the Summary Delete button step before deploying again?"
+          "still the generated summary length is very short"
         ]
       },
       "acceptanceCriteria": [
-        "When a summary is displayed, the Summary card shows a trash icon button positioned in the card’s top-right corner (inside the card header area).",
-        "Clicking the trash icon clears the summary content by setting the Summary state to an empty string, and the Summary section no longer renders (since the dashboard currently only renders the Summary section when `summary` is truthy).",
-        "Clicking the Summary delete control does not change `quizArray` state; any rendered Quiz section remains visible and unchanged.",
-        "The existing Quiz delete button continues to delete only the quiz content and does not affect the Summary state.",
-        "All user-facing text remains in English."
+        "When uploading a non-trivial PDF/TXT/MD file with substantial text, the displayed summary contains substantially more content than the current output (i.e., not just a very short excerpt).",
+        "Summary rendering preserves line breaks/paragraphs and does not truncate or collapse content in the UI (the full summary string returned by processing is visible).",
+        "Offline mode (no webhook URL configured) produces a longer summary than before for the same input file."
       ]
     },
     {
-      "id": "REQ-37",
-      "text": "Wire the Summary Delete button into Dashboard state management by adding a Summary delete handler in the Dashboard page and passing it into the SummaryCard component via props, without changing the existing Quiz delete handler or QuizSection behavior.",
+      "id": "REQ-2",
+      "text": "Fix quiz generation/data handling so the Interactive Quiz displays 10 questions when enough source text exists, and do not inadvertently limit the rendered quiz list to fewer items.",
       "target": "frontend",
       "source": {
         "messageIds": [
           "msg-1"
         ],
         "quotes": [
-          "re‑generate the code for the Summary Delete button step before deploying again?"
+          "instead of 10 questions only 6 are displayed"
         ]
       },
       "acceptanceCriteria": [
-        "`frontend/src/pages/DashboardPage.tsx` includes a dedicated handler that clears only the summary state (e.g., `setSummary('')`).",
-        "`frontend/src/components/SummaryCard.tsx` accepts an `onDelete` (or equivalent) callback prop and calls it when the trash icon button is clicked.",
-        "No changes are made that couple Summary deletion to Quiz deletion (e.g., Summary deletion must not call `setQuizArray([])`)."
-      ]
-    },
-    {
-      "id": "REQ-38",
-      "text": "Create a new build draft from the updated repository state and run the standard build + deployment pipeline to produce a fresh deployment.",
-      "target": "both",
-      "source": {
-        "messageIds": [
-          "msg-1"
-        ],
-        "quotes": [
-          "re‑generate the code for the Summary Delete button step before deploying again?"
-        ]
-      },
-      "acceptanceCriteria": [
-        "A new build draft is created successfully (no “You don’t have a draft yet” deployment error).",
-        "The build passes TypeScript compilation and the frontend build step.",
-        "A fresh deployment is produced and is accessible at the generated deployment URL(s)."
+        "In offline mode, when the uploaded document has sufficient content, the returned quiz_array contains 10 items and the UI displays “Quiz (10 questions)”.",
+        "The quiz UI renders all items in quizArray (no slicing/hidden limiting), and the question numbering runs from 1 to the full length of quizArray.",
+        "If fewer than 10 questions are available due to insufficient source content, the UI still renders all returned questions and the displayed count matches quizArray.length."
       ]
     }
   ],
   "constraints": [
-    "Frontend immutable paths must not be modified: frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useInternetIdentity.tsx, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, frontend/src/components/ui (compose only).",
-    "Keep the backend as a single Motoko actor (backend/main.mo). Do not introduce additional backend services.",
+    "Do not edit files under frontend/src/components/ui or any paths listed in frontend immutablePaths.",
+    "Backend must remain a single Motoko actor; only add backend changes if strictly necessary (prefer fixing in frontend/offline processing first).",
     "Use English for any user-facing text."
   ],
   "nonGoals": [
-    "Do not re-enable or re-add the Ask AI UI (it must remain hidden/disabled).",
-    "Do not change webhook configuration behavior beyond what is required for the Summary delete button work.",
-    "Do not add database/persistent storage for Summary or Quiz content (local in-memory state only)."
+    "Adding new authentication providers (Internet Identity remains the only auth).",
+    "Adding databases or external backend services.",
+    "Changing the overall app feature set beyond fixing summary length and quiz question count issues."
   ],
   "imageRequirements": {
     "required": [],
     "edits": []
-  },
-  "userProfileUpdate": {
-    "goalsToAdd": [],
-    "goalsToRemove": [],
-    "preferencesToAdd": [],
-    "preferencesToRemove": [],
-    "miscToAdd": [],
-    "miscToRemove": [],
-    "fieldsToSet": {},
-    "fieldsToDelete": []
   }
 }
