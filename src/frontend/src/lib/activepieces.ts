@@ -1,6 +1,10 @@
 import { getWebhookUrl } from './env';
-import { processFileOffline } from './offlineNoteProcessing';
+import { processFileOffline, generateExpandedSummary } from './offlineNoteProcessing';
 import type { UploadResponse, AskAIResponse } from './types';
+
+// Minimum summary length threshold (in characters)
+// If webhook returns a summary shorter than this, we'll generate an expanded one
+const MIN_SUMMARY_LENGTH = 200;
 
 export async function uploadFile(file: File): Promise<UploadResponse> {
   try {
@@ -35,8 +39,39 @@ export async function uploadFile(file: File): Promise<UploadResponse> {
       throw new Error('Invalid response format: quiz_array must be an array');
     }
 
+    // Check if the webhook-provided summary is too short
+    const webhookSummary = data.summary.trim();
+    
+    if (webhookSummary.length < MIN_SUMMARY_LENGTH) {
+      // Summary is too short - try to generate an expanded one client-side
+      try {
+        const expandedSummary = await generateExpandedSummary(file);
+        
+        // Return expanded summary with webhook quiz_array
+        return {
+          summary: expandedSummary,
+          quiz_array: data.quiz_array,
+          summaryFallbackUsed: true
+        };
+      } catch (fallbackError) {
+        // If we can't generate an expanded summary (e.g., image-only PDF),
+        // return the webhook summary with an informational message
+        const errorMsg = fallbackError instanceof Error 
+          ? fallbackError.message 
+          : 'Could not extract text from the file to expand the summary.';
+        
+        return {
+          summary: webhookSummary,
+          quiz_array: data.quiz_array,
+          summaryFallbackUsed: false,
+          summaryFallbackError: `Note: The summary provided is brief. ${errorMsg}`
+        };
+      }
+    }
+
+    // Summary is adequate - use webhook response as-is
     return {
-      summary: data.summary,
+      summary: webhookSummary,
       quiz_array: data.quiz_array,
     };
   } catch (error) {

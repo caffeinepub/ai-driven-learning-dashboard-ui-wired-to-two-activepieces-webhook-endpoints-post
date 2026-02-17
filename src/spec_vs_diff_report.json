@@ -1,40 +1,45 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-17T10:02:14.718Z",
-  "summary": "REQ-1 appears implemented in both offline summary generation (longer, multi-paragraph/sentence extraction) and UI rendering (preserves line breaks with whitespace-pre-wrap). REQ-2 cannot be fully verified from the provided diff because quiz generation and quiz UI rendering/count behavior are truncated/not shown, and no quiz UI files are included as modified.",
+  "generatedAt": "2026-02-17T10:11:11.276Z",
+  "summary": "Diff implements longer, multi-paragraph summary rendering in the UI and adds a client-side fallback that generates an expanded summary when a webhook returns a short one, while preserving the webhook-provided quiz_array.",
   "missing_requirements": [
     {
       "id": "REQ-2",
-      "requirement": "Ensure the Interactive Quiz displays 10 questions when enough source text exists, does not limit rendered items, and the displayed count/numbering matches quizArray.length.",
-      "reason": "The diff shows changes to offline quiz generation but the function body is truncated before we can confirm it always generates up to 10 items when possible. Additionally, no quiz UI component changes are shown, so we cannot verify that the UI displays “Quiz (10 questions)”, renders all quizArray items without slicing, and numbers questions up to quizArray.length.",
+      "requirement": "When webhook summary is below a defined minimum length threshold, generate a longer summary using the same offline summarization logic used when no webhook is configured.",
+      "reason": "The webhook-short-summary fallback calls `generateExpandedSummary(file)`, but the diff excerpt for `offlineNoteProcessing.ts` does not show an exported `generateExpandedSummary` implementation nor confirm it reuses the same offline summarization path (`processFileOffline` / `generateSummary`). Because the file is truncated, reuse cannot be verified from provided evidence.",
       "evidence": [
-        "frontend/src/lib/offlineNoteProcessing.ts (truncated)",
-        "No modified quiz UI files shown in diff (e.g., frontend/src/components/Quiz/* not listed under MODIFIED FILES)"
+        "frontend/src/lib/activepieces.ts",
+        "frontend/src/lib/offlineNoteProcessing.ts"
       ]
     }
   ],
   "hallucinated_features": [
     {
-      "description": "Added a user-visible summary truncation notice string (“[Summary truncated - full content available in original document]”).",
-      "reason": "REQ-1 asks for longer summaries and no UI truncation; it does not request adding an explicit truncation disclaimer message into the summary content itself.",
+      "description": "Added strict webhook response validation that throws if `summary` is missing/empty and if `quiz_array` is not an array.",
+      "reason": "BuildRequest focuses on making summaries longer and adding a short-summary fallback; it does not request stricter schema validation or new error conditions for webhook responses.",
       "evidence": [
-        "frontend/src/lib/offlineNoteProcessing.ts"
+        "frontend/src/lib/activepieces.ts"
       ]
     },
     {
-      "description": "Added/introduced a delete button (trash icon) in the Summary card UI (conditional on onDelete).",
-      "reason": "BuildRequest focuses only on summary length/rendering and quiz question count; it does not request adding summary deletion controls.",
+      "description": "Added summary fallback informational messaging fields (`summaryFallbackUsed`, `summaryFallbackError`) and UI alerts describing fallback behavior.",
+      "reason": "REQ-2 requires using an expanded summary as a fallback and actionable English errors if extraction fails, but does not explicitly request new response fields or a dedicated UI info banner/state management beyond using the expanded summary.",
       "evidence": [
-        "frontend/src/components/SummaryCard.tsx"
+        "frontend/src/lib/types.ts",
+        "frontend/src/pages/DashboardPage.tsx",
+        "frontend/src/lib/activepieces.ts"
       ]
     }
   ],
-  "confidence": 0.63,
+  "confidence": 0.62,
   "changed_files": [
     "frontend-file-summaries.txt",
     "frontend/src/components/SummaryCard.tsx",
+    "frontend/src/lib/activepieces.ts",
     "frontend/src/lib/offlineNoteProcessing.ts",
+    "frontend/src/lib/types.ts",
+    "frontend/src/pages/DashboardPage.tsx",
     "project_state.json"
   ]
 }

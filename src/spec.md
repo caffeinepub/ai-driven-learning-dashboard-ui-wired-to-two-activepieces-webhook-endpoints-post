@@ -1,12 +1,12 @@
 # Specification
 
 ## Summary
-**Goal:** Make generated note summaries longer and ensure the UI displays the complete summary text, and fix quiz rendering so the Interactive Quiz shows up to 10 questions when available.
+**Goal:** Make the Summary shown on the public/deployed app link noticeably longer and more informative after users upload notes, without changing quiz questions or quiz behavior.
 
 **Planned changes:**
-- Increase offline summary generation output length so substantial uploads produce a noticeably more informative summary.
-- Update dashboard summary rendering to preserve paragraphs/line breaks and display the full returned summary without truncation/collapsing.
-- Fix offline quiz generation/data handling to return 10 questions when sufficient source text exists.
-- Ensure the Interactive Quiz UI renders all items in `quizArray` (no unintended slicing/limiting) and the displayed count/numbering matches `quizArray.length`.
+- Update the Summary rendering to show the full returned summary text (preserve line breaks; avoid UI truncation/cutoff).
+- When a webhook is configured, detect when the webhook-provided summary is below a minimum length threshold and automatically generate an expanded client-side summary from the uploaded file text as a fallback.
+- Keep quiz behavior unchanged: when a webhook is configured, always display the webhook-provided `quiz_array` as-is, even if the summary falls back to client-side generation.
+- Add actionable English error messaging if client-side text extraction fails (e.g., image-only PDFs), while leaving quiz rendering unaffected.
 
-**User-visible outcome:** After uploading notes, users see a longer, more detailed summary fully rendered on the dashboard, and the Interactive Quiz displays up to 10 questions (or fewer if the source content is insufficient) with the correct question count shown.
+**User-visible outcome:** After uploading a document via the deployed/public link, users see a substantially longer, multi-paragraph summary (when the source content supports it), and the interactive quiz remains exactly as before.

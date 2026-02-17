@@ -263,3 +263,17 @@ export async function processFileOffline(file: File): Promise<UploadResponse> {
     throw new Error('Failed to process file. Please try again.');
   }
 }
+
+/**
+ * Generates an expanded summary from a file (for webhook fallback)
+ * Returns only the summary without generating quiz questions
+ */
+export async function generateExpandedSummary(file: File): Promise<string> {
+  const textContent = await extractTextContent(file);
+  
+  if (!textContent || textContent.trim().length === 0) {
+    throw new Error('The uploaded file appears to be empty or contains no extractable text.');
+  }
+  
+  return generateSummary(textContent);
+}

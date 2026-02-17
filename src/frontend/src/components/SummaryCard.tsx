@@ -19,6 +19,9 @@ export default function SummaryCard({ summary, onDelete }: SummaryCardProps) {
     );
   }
 
+  // Split summary into paragraphs for better rendering
+  const paragraphs = summary.split('\n\n').filter(p => p.trim().length > 0);
+
   return (
     <Card>
       <CardHeader>
@@ -42,7 +45,11 @@ export default function SummaryCard({ summary, onDelete }: SummaryCardProps) {
       </CardHeader>
       <CardContent>
         <div className="prose prose-sm max-w-none dark:prose-invert">
-          <p className="whitespace-pre-wrap break-words leading-relaxed">{summary}</p>
+          {paragraphs.map((paragraph, index) => (
+            <p key={index} className="mb-4 last:mb-0 whitespace-pre-wrap break-words leading-relaxed">
+              {paragraph}
+            </p>
+          ))}
         </div>
       </CardContent>
     </Card>

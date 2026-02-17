@@ -4,22 +4,21 @@
   "summary": "New project",
   "architectural_notes": [],
   "known_issues": [
-    "Generated summary length is still very short (not meeting expected length).",
-    "Quiz is displaying only 6 questions instead of the expected 10."
+    "Public link displays summary content that is still too short; needs adjustment/expansion."
   ],
   "isFixRequest": true,
   "existing_features": [
     {
-      "id": "feature-increase-the-generated-summary-length-so-that-uploaded-notes-produce-a-noticeably-longer-more-informative-summary-especially-in-offline-processing-and-ensure-the-dashboard-renders-the-full-returned-summary-text-without-truncation",
-      "title": "Increase the generated summary length so that uploaded notes produce a noticeably longer, more informative summary (especially in offline processing) and ensure the dashboard renders the full returned summary text without truncation.",
+      "id": "feature-ensure-the-summary-displayed-in-the-deployed-public-app-link-is-noticeably-longer-and-more-informative-when-users-upload-notes-while-keeping-quiz-questions-unchanged",
+      "title": "Ensure the summary displayed in the deployed/public app link is noticeably longer and more informative when users upload notes, while keeping quiz questions unchanged.",
       "reqIds": [
         "REQ-1"
       ],
       "version": 1
     },
     {
-      "id": "feature-fix-quiz-generation-data-handling-so-the-interactive-quiz-displays-10-questions-when-enough-source-text-exists-and-do-not-inadvertently-limit-the-rendered-quiz-list-to-fewer-items",
-      "title": "Fix quiz generation/data handling so the Interactive Quiz displays 10 questions when enough source text exists, and do not inadvertently limit the rendered quiz list to fewer items.",
+      "id": "feature-when-a-webhook-is-configured-and-returns-a-very-short-summary-automatically-generate-an-expanded-client-side-summary-from-the-uploaded-file-text-and-use-that-instead-or-as-a-fallback-without-changing-the-quiz-array-returned-by-the-webhook",
+      "title": "When a webhook is configured and returns a very short summary, automatically generate an expanded client-side summary from the uploaded file text and use that instead (or as a fallback), without changing the quiz array returned by the webhook.",
       "reqIds": [
         "REQ-2"
       ],

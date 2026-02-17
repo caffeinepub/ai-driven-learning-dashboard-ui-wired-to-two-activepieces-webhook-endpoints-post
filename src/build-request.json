@@ -1,55 +1,56 @@
 {
   "kind": "build_request",
-  "title": "Fix short summary output and ensure quiz shows up to 10 questions",
+  "title": "Expand summary output shown on the public/deployed link",
   "projectName": "Notes Quizzer",
   "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Increase the generated summary length so that uploaded notes produce a noticeably longer, more informative summary (especially in offline processing) and ensure the dashboard renders the full returned summary text without truncation.",
+      "text": "Ensure the summary displayed in the deployed/public app link is noticeably longer and more informative when users upload notes, while keeping quiz questions unchanged.",
       "target": "frontend",
       "source": {
         "messageIds": [
           "msg-1"
         ],
         "quotes": [
-          "still the generated summary length is very short"
+          "summary content is still short in public link.quiz questions are ok"
         ]
       },
       "acceptanceCriteria": [
-        "When uploading a non-trivial PDF/TXT/MD file with substantial text, the displayed summary contains substantially more content than the current output (i.e., not just a very short excerpt).",
-        "Summary rendering preserves line breaks/paragraphs and does not truncate or collapse content in the UI (the full summary string returned by processing is visible).",
-        "Offline mode (no webhook URL configured) produces a longer summary than before for the same input file."
+        "After uploading a document, the Summary section shows substantially more content than the current short summary (e.g., at least multiple paragraphs when source text contains multiple paragraphs).",
+        "Quiz behavior remains unchanged (still renders the existing questions and interaction behavior).",
+        "The summary UI renders the full returned summary text without cutting it off (line breaks preserved; no additional truncation in the UI beyond what the summary generator explicitly adds)."
       ]
     },
     {
       "id": "REQ-2",
-      "text": "Fix quiz generation/data handling so the Interactive Quiz displays 10 questions when enough source text exists, and do not inadvertently limit the rendered quiz list to fewer items.",
+      "text": "When a webhook is configured and returns a very short summary, automatically generate an expanded client-side summary from the uploaded file text and use that instead (or as a fallback), without changing the quiz array returned by the webhook.",
       "target": "frontend",
       "source": {
         "messageIds": [
           "msg-1"
         ],
         "quotes": [
-          "instead of 10 questions only 6 are displayed"
+          "summary content is still short in public link.quiz questions are ok"
         ]
       },
       "acceptanceCriteria": [
-        "In offline mode, when the uploaded document has sufficient content, the returned quiz_array contains 10 items and the UI displays “Quiz (10 questions)”.",
-        "The quiz UI renders all items in quizArray (no slicing/hidden limiting), and the question numbering runs from 1 to the full length of quizArray.",
-        "If fewer than 10 questions are available due to insufficient source content, the UI still renders all returned questions and the displayed count matches quizArray.length."
+        "If the webhook response summary is below a defined minimum length threshold, the app extracts text from the uploaded file in the browser and generates a longer summary using the same offline summarization logic used when no webhook is configured.",
+        "If the webhook response summary is not short, the app uses the webhook-provided summary as-is.",
+        "In all cases, the quiz array shown to the user remains the webhook-provided quiz_array when a webhook is configured (no reduction in question count caused by the summary fallback).",
+        "User-facing errors remain in English and remain actionable if text extraction fails (e.g., image-only PDF)."
       ]
     }
   ],
   "constraints": [
-    "Do not edit files under frontend/src/components/ui or any paths listed in frontend immutablePaths.",
-    "Backend must remain a single Motoko actor; only add backend changes if strictly necessary (prefer fixing in frontend/offline processing first).",
-    "Use English for any user-facing text."
+    "Do not edit files under frontend/src/components/ui (compose them instead).",
+    "Do not modify immutable frontend paths: frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useInternetIdentity.tsx, frontend/src/hooks/useActor.ts, frontend/src/main.tsx.",
+    "Backend remains a single Motoko actor; only add backend changes if strictly necessary for the summary-length fix."
   ],
   "nonGoals": [
-    "Adding new authentication providers (Internet Identity remains the only auth).",
-    "Adding databases or external backend services.",
-    "Changing the overall app feature set beyond fixing summary length and quiz question count issues."
+    "Changing quiz question generation logic or the number of quiz questions (user indicated quiz questions are OK).",
+    "Adding new authentication providers beyond Internet Identity.",
+    "Adding external databases or non-Motoko backend services."
   ],
   "imageRequirements": {
     "required": [],
