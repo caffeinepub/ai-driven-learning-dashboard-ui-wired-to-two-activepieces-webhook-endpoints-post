@@ -1,59 +1,91 @@
 {
   "kind": "build_request",
-  "title": "Expand summary output shown on the public/deployed link",
+  "title": "Hard-code ActivePieces webhook URL (remove env-var dependency)",
   "projectName": "Notes Quizzer",
-  "priority": "normal",
+  "priority": "high",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Ensure the summary displayed in the deployed/public app link is noticeably longer and more informative when users upload notes, while keeping quiz questions unchanged.",
+      "text": "Hard-code the ActivePieces webhook endpoint URL in the frontend code so the app works without configuring the VITE_WEBHOOK_URL environment variable. Use this exact URL: https://cloud.activepieces.com/api/v1/webhooks/arB5MIDx32mR1vdmBIC0r/sync",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-1"
+          "msg-4",
+          "msg-5"
         ],
         "quotes": [
-          "summary content is still short in public link.quiz questions are ok"
+          "Do you want me to update your app so that the webhook URL is hard‑coded into the frontend code instead of using an environment variable?",
+          "yes"
         ]
       },
       "acceptanceCriteria": [
-        "After uploading a document, the Summary section shows substantially more content than the current short summary (e.g., at least multiple paragraphs when source text contains multiple paragraphs).",
-        "Quiz behavior remains unchanged (still renders the existing questions and interaction behavior).",
-        "The summary UI renders the full returned summary text without cutting it off (line breaks preserved; no additional truncation in the UI beyond what the summary generator explicitly adds)."
+        "If VITE_WEBHOOK_URL is not set at build time, uploads and Ask AI requests still call https://cloud.activepieces.com/api/v1/webhooks/arB5MIDx32mR1vdmBIC0r/sync",
+        "If VITE_WEBHOOK_URL is set, the app behavior is documented and consistent (either it overrides the hard-coded URL or it is ignored), and no runtime UI is required to configure it"
       ]
     },
     {
       "id": "REQ-2",
-      "text": "When a webhook is configured and returns a very short summary, automatically generate an expanded client-side summary from the uploaded file text and use that instead (or as a fallback), without changing the quiz array returned by the webhook.",
+      "text": "Remove/disable any UI warnings, prompts, or help panels that instruct the user to configure VITE_WEBHOOK_URL (e.g., messages like “Webhook URL is not configured...”). The dashboard should not display any webhook setup banner in live mode.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-1"
+          "msg-1",
+          "msg-2",
+          "msg-5"
         ],
         "quotes": [
-          "summary content is still short in public link.quiz questions are ok"
+          "Deployment error",
+          "in this window i cannot see environment variable. please add the url by yourself",
+          "yes"
         ]
       },
       "acceptanceCriteria": [
-        "If the webhook response summary is below a defined minimum length threshold, the app extracts text from the uploaded file in the browser and generates a longer summary using the same offline summarization logic used when no webhook is configured.",
-        "If the webhook response summary is not short, the app uses the webhook-provided summary as-is.",
-        "In all cases, the quiz array shown to the user remains the webhook-provided quiz_array when a webhook is configured (no reduction in question count caused by the summary fallback).",
-        "User-facing errors remain in English and remain actionable if text extraction fails (e.g., image-only PDF)."
+        "When the app loads in authenticated mode, there is no visible banner or alert telling the user to set VITE_WEBHOOK_URL",
+        "No UI flow exists that asks the user to paste/save/clear a webhook URL at runtime (e.g., via localStorage overrides or a setup panel)"
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "text": "Ensure file upload and Ask AI flows no longer fail with an error that specifically references missing VITE_WEBHOOK_URL. Error messages (when they occur) should reflect actual network/response failures, not configuration instructions.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-3",
+          "msg-5"
+        ],
+        "quotes": [
+          "Add this exactly: • Key: `VITE_WEBHOOK_URL`",
+          "yes"
+        ]
+      },
+      "acceptanceCriteria": [
+        "With the hard-coded URL enabled, uploading a valid file does not throw an error about missing VITE_WEBHOOK_URL",
+        "With the hard-coded URL enabled, Ask AI does not throw an error about missing VITE_WEBHOOK_URL",
+        "If the webhook responds with non-OK status or invalid payload, the user sees a clear error describing the request/response failure (not env-var setup steps)"
       ]
     }
   ],
   "constraints": [
-    "Do not edit files under frontend/src/components/ui (compose them instead).",
-    "Do not modify immutable frontend paths: frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useInternetIdentity.tsx, frontend/src/hooks/useActor.ts, frontend/src/main.tsx.",
-    "Backend remains a single Motoko actor; only add backend changes if strictly necessary for the summary-length fix."
+    "Do not edit any files under frontend/src/components/ui (compose them instead).",
+    "Do not modify immutable frontend paths: frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useInternetIdentity.tsx, frontend/src/hooks/useActor.ts, frontend/src/main.tsx."
   ],
   "nonGoals": [
-    "Changing quiz question generation logic or the number of quiz questions (user indicated quiz questions are OK).",
-    "Adding new authentication providers beyond Internet Identity.",
-    "Adding external databases or non-Motoko backend services."
+    "Adding a new backend service or storing webhook URLs in the Motoko canister state",
+    "Adding a runtime settings screen to manage webhook URLs",
+    "Integrating third-party auth beyond Internet Identity"
   ],
   "imageRequirements": {
     "required": [],
     "edits": []
+  },
+  "userProfileUpdate": {
+    "goalsToAdd": [],
+    "goalsToRemove": [],
+    "preferencesToAdd": [],
+    "preferencesToRemove": [],
+    "miscToAdd": [],
+    "miscToRemove": [],
+    "fieldsToSet": {},
+    "fieldsToDelete": []
   }
 }

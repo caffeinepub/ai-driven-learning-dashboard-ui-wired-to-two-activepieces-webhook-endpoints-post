@@ -7,8 +7,6 @@ export interface QuizItem {
 export interface UploadResponse {
   summary: string;
   quiz_array: QuizItem[];
-  summaryFallbackUsed?: boolean;
-  summaryFallbackError?: string;
 }
 
 export interface AskAIResponse {

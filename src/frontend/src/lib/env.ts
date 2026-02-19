@@ -1,41 +1,32 @@
-import { getWebhookOverride } from './webhookOverride';
+/**
+ * Hard-coded default webhook URL for ActivePieces integration.
+ * This ensures the app works out-of-the-box without requiring environment variable configuration.
+ */
+const DEFAULT_WEBHOOK_URL = 'https://cloud.activepieces.com/api/v1/webhooks/arB5MIDx32mR1vdmBIC0r/sync';
 
 /**
- * Error message constant for missing webhook URL configuration.
+ * Resolves the webhook URL with the following priority:
+ * 1. VITE_WEBHOOK_URL environment variable (if set) - allows override
+ * 2. Hard-coded default URL (always available)
+ * 
+ * This function always returns a valid URL.
  */
-export const MISSING_WEBHOOK_ERROR = 'No webhook URL configured. Please set VITE_WEBHOOK_URL in your environment variables.';
-
-/**
- * Checks if a webhook URL is configured (either via override or environment variable)
- */
-export function hasWebhookUrl(): boolean {
-  const override = getWebhookOverride();
-  if (override) {
-    return true;
+export function getWebhookUrl(): string {
+  const envUrl = import.meta.env.VITE_WEBHOOK_URL;
+  
+  // If environment variable is set and non-empty, use it as override
+  if (envUrl && envUrl.trim() !== '') {
+    return envUrl.trim();
   }
   
-  const url = import.meta.env.VITE_WEBHOOK_URL;
-  return !!(url && url.trim() !== '');
+  // Otherwise, use the hard-coded default
+  return DEFAULT_WEBHOOK_URL;
 }
 
 /**
- * Resolves the single webhook URL used for both file upload (process_notes) and Ask AI (ask_ai) actions.
- * Prefers runtime override from localStorage, then falls back to VITE_WEBHOOK_URL.
- * Returns null if neither is configured (no longer throws).
+ * Checks if a webhook URL is available (always true with hard-coded default).
+ * Kept for backward compatibility.
  */
-export function getWebhookUrl(): string | null {
-  // First, check for runtime override
-  const override = getWebhookOverride();
-  if (override) {
-    return override;
-  }
-
-  // Fall back to build-time environment variable
-  const url = import.meta.env.VITE_WEBHOOK_URL;
-
-  if (!url || url.trim() === '') {
-    return null;
-  }
-
-  return url.trim();
+export function hasWebhookUrl(): boolean {
+  return true;
 }

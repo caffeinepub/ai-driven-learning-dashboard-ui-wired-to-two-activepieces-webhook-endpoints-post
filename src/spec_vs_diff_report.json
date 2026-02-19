@@ -1,45 +1,65 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-17T10:11:11.276Z",
-  "summary": "Diff implements longer, multi-paragraph summary rendering in the UI and adds a client-side fallback that generates an expanded summary when a webhook returns a short one, while preserving the webhook-provided quiz_array.",
+  "generatedAt": "2026-02-17T11:22:17.298Z",
+  "summary": "REQ-1 and REQ-3 appear implemented via a hard-coded default webhook URL with optional env override and updated error handling in the ActivePieces client. However, REQ-2 is not satisfied because the diff summary indicates a new/expanded webhook setup help panel and a localStorage-based webhook override flow—both explicitly disallowed by the request.",
   "missing_requirements": [
     {
       "id": "REQ-2",
-      "requirement": "When webhook summary is below a defined minimum length threshold, generate a longer summary using the same offline summarization logic used when no webhook is configured.",
-      "reason": "The webhook-short-summary fallback calls `generateExpandedSummary(file)`, but the diff excerpt for `offlineNoteProcessing.ts` does not show an exported `generateExpandedSummary` implementation nor confirm it reuses the same offline summarization path (`processFileOffline` / `generateSummary`). Because the file is truncated, reuse cannot be verified from provided evidence.",
+      "requirement": "Remove/disable any UI warnings, prompts, or help panels that instruct the user to configure VITE_WEBHOOK_URL; no runtime UI flow to paste/save/clear webhook URL.",
+      "reason": "The diff summary indicates a webhook setup help panel with in-app webhook URL input and Save/Clear actions, plus a localStorage override utility—this is a runtime UI/configuration flow rather than removal/disablement.",
       "evidence": [
-        "frontend/src/lib/activepieces.ts",
-        "frontend/src/lib/offlineNoteProcessing.ts"
+        "frontend-file-summaries.txt (mentions frontend/src/components/WebhookSetupHelpPanel.tsx with in-app webhook URL input, Save/Clear actions, env-var alternative instructions)",
+        "frontend-file-summaries.txt (mentions frontend/src/lib/webhookOverride.ts for persisting overrides in localStorage)"
       ]
     }
   ],
   "hallucinated_features": [
     {
-      "description": "Added strict webhook response validation that throws if `summary` is missing/empty and if `quiz_array` is not an array.",
-      "reason": "BuildRequest focuses on making summaries longer and adding a short-summary fallback; it does not request stricter schema validation or new error conditions for webhook responses.",
+      "description": "Client-side webhook URL override persisted via localStorage (runtime configuration mechanism).",
+      "reason": "BuildRequest explicitly disallows any runtime UI flow to paste/save/clear a webhook URL and aims to remove env-var setup prompts; localStorage override is an additional unrequested configuration feature.",
       "evidence": [
-        "frontend/src/lib/activepieces.ts"
+        "frontend-file-summaries.txt (frontend/src/lib/webhookOverride.ts)"
       ]
     },
     {
-      "description": "Added summary fallback informational messaging fields (`summaryFallbackUsed`, `summaryFallbackError`) and UI alerts describing fallback behavior.",
-      "reason": "REQ-2 requires using an expanded summary as a fallback and actionable English errors if extraction fails, but does not explicitly request new response fields or a dedicated UI info banner/state management beyond using the expanded summary.",
+      "description": "Webhook setup help panel with in-app webhook URL input, validation, Save/Clear actions, and setup instructions.",
+      "reason": "BuildRequest requires removing/disablement of webhook setup help/panels and any UI prompting configuration; adding/enhancing such a panel is opposite of REQ-2.",
       "evidence": [
-        "frontend/src/lib/types.ts",
-        "frontend/src/pages/DashboardPage.tsx",
-        "frontend/src/lib/activepieces.ts"
+        "frontend-file-summaries.txt (frontend/src/components/WebhookSetupHelpPanel.tsx)"
+      ]
+    },
+    {
+      "description": "Added extensive webhook setup documentation (WEBHOOK_SETUP.md) and deployment doc changes referencing optional override behavior.",
+      "reason": "Not requested as part of the requirements (only required that behavior be documented/consistent; the dedicated setup guide and additional docs are extra scope beyond hard-coding + removing UI prompts).",
+      "evidence": [
+        "frontend/WEBHOOK_SETUP.md",
+        "frontend/DEPLOYMENT.md"
+      ]
+    },
+    {
+      "description": "UI/branding and styling changes (app name to \"AI Learning Coach\", OKLCH palette, quiz UI behavior changes, file type hints, summary card delete icon, etc.).",
+      "reason": "Not requested by the BuildRequest, which is narrowly focused on webhook URL configuration and related UI/error messaging.",
+      "evidence": [
+        "frontend-file-summaries.txt (SignInPage/AppShell app name changes; index.css palette changes; Quiz/InteractiveQuiz behavior; FileUpload hints; SummaryCard delete icon)"
+      ]
+    },
+    {
+      "description": "Client-side offline note processing module.",
+      "reason": "Non-goals explicitly include not adding alternative processing paths/services for webhook configuration; an offline processing module is unrelated/unrequested for the webhook hard-coding change.",
+      "evidence": [
+        "frontend-file-summaries.txt (frontend/src/lib/offlineNoteProcessing.ts)"
       ]
     }
   ],
-  "confidence": 0.62,
+  "confidence": 0.78,
   "changed_files": [
     "frontend-file-summaries.txt",
-    "frontend/src/components/SummaryCard.tsx",
+    "frontend/.env.example",
+    "frontend/DEPLOYMENT.md",
+    "frontend/WEBHOOK_SETUP.md",
     "frontend/src/lib/activepieces.ts",
-    "frontend/src/lib/offlineNoteProcessing.ts",
-    "frontend/src/lib/types.ts",
-    "frontend/src/pages/DashboardPage.tsx",
+    "frontend/src/lib/env.ts",
     "project_state.json"
   ]
 }

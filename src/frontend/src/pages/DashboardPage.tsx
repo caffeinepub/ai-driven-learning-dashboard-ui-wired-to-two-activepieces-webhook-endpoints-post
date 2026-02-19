@@ -4,10 +4,11 @@ import AppShell from '../components/layout/AppShell';
 import FileUpload from '../components/FileUpload';
 import SummaryCard from '../components/SummaryCard';
 import QuizSection from '../components/Quiz/QuizSection';
-import { uploadFile } from '../lib/activepieces';
+import AskAIModule from '../components/AskAI/AskAIModule';
+import { uploadFile, askAI } from '../lib/activepieces';
 import type { QuizItem } from '../lib/types';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { AlertCircle, Info } from 'lucide-react';
+import { AlertCircle } from 'lucide-react';
 
 export default function DashboardPage() {
   const { clear } = useInternetIdentity();
@@ -15,28 +16,26 @@ export default function DashboardPage() {
   // State for uploaded content
   const [summary, setSummary] = useState<string>('');
   const [quizArray, setQuizArray] = useState<QuizItem[]>([]);
-  const [summaryFallbackInfo, setSummaryFallbackInfo] = useState<string>('');
   
   // UI state
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string>('');
+  
+  // Ask AI state
+  const [aiAnswer, setAiAnswer] = useState<string>('');
+  const [isAskingAI, setIsAskingAI] = useState(false);
+  const [askAIError, setAskAIError] = useState<string>('');
 
   const handleFileUpload = async (file: File) => {
     setIsUploading(true);
     setUploadError('');
-    setSummaryFallbackInfo('');
+    setSummary('');
+    setQuizArray([]);
     
     try {
       const result = await uploadFile(file);
       setSummary(result.summary);
       setQuizArray(result.quiz_array);
-      
-      // Handle fallback messaging
-      if (result.summaryFallbackUsed) {
-        setSummaryFallbackInfo('The original summary was brief, so we generated a more detailed one from your document.');
-      } else if (result.summaryFallbackError) {
-        setSummaryFallbackInfo(result.summaryFallbackError);
-      }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to upload file';
       setUploadError(errorMessage);
@@ -47,11 +46,36 @@ export default function DashboardPage() {
 
   const handleDeleteSummary = () => {
     setSummary('');
-    setSummaryFallbackInfo('');
   };
 
   const handleDeleteQuiz = () => {
     setQuizArray([]);
+  };
+
+  const handleAskAI = async (question: string) => {
+    if (!summary) {
+      setAskAIError('Please upload notes first to provide context.');
+      return;
+    }
+
+    setIsAskingAI(true);
+    setAskAIError('');
+    setAiAnswer('');
+
+    try {
+      const response = await askAI(question, summary);
+      setAiAnswer(response.ai_answer);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to get AI response';
+      setAskAIError(errorMessage);
+    } finally {
+      setIsAskingAI(false);
+    }
+  };
+
+  const handleClearAI = () => {
+    setAiAnswer('');
+    setAskAIError('');
   };
 
   return (
@@ -78,15 +102,9 @@ export default function DashboardPage() {
         {/* Summary Section */}
         {summary && (
           <section>
-            <h2 className="mb-4 text-2xl font-bold">Summary</h2>
-            {summaryFallbackInfo && (
-              <div className="mb-4">
-                <Alert>
-                  <Info className="h-4 w-4" />
-                  <AlertDescription>{summaryFallbackInfo}</AlertDescription>
-                </Alert>
-              </div>
-            )}
+            <div className="mb-4 flex items-center gap-3">
+              <h2 className="text-2xl font-bold">Summary</h2>
+            </div>
             <SummaryCard summary={summary} onDelete={handleDeleteSummary} />
           </section>
         )}
@@ -98,6 +116,20 @@ export default function DashboardPage() {
             <QuizSection
               quizArray={quizArray}
               onDelete={handleDeleteQuiz}
+            />
+          </section>
+        )}
+
+        {/* Ask AI Section */}
+        {summary && (
+          <section>
+            <AskAIModule
+              onAsk={handleAskAI}
+              aiAnswer={aiAnswer}
+              isLoading={isAskingAI}
+              error={askAIError}
+              onClear={handleClearAI}
+              hasContext={!!summary}
             />
           </section>
         )}

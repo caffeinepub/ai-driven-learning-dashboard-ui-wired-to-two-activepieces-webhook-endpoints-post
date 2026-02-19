@@ -27,16 +27,19 @@ A build draft represents a snapshot of your current codebase that will be built 
      - File upload with webhook processing
      - Ask AI feature
      - Quiz generation and interaction
-   - Check that the webhook URL is configured (either via environment variable or in-app setup)
+
+## Configuration
+
+### Webhook URL
+
+The app includes a pre-configured webhook URL and works without any environment variable setup. If you need to use a custom ActivePieces webhook:
+
+1. Set the `VITE_WEBHOOK_URL` environment variable in your deployment platform
+2. Redeploy the application
+
+See [WEBHOOK_SETUP.md](./WEBHOOK_SETUP.md) for detailed webhook configuration instructions.
 
 ## Troubleshooting
-
-### Webhook Configuration Issues
-
-If you see "Webhook URL is not configured" errors after deployment:
-- Use the in-app webhook setup panel on the dashboard
-- Enter your ActivePieces webhook URL and click "Save Webhook URL"
-- See [WEBHOOK_SETUP.md](./WEBHOOK_SETUP.md) for detailed webhook configuration instructions
 
 ### Build Failures
 
@@ -49,6 +52,14 @@ If you see "Webhook URL is not configured" errors after deployment:
 - Verify you can access the deployed URL
 - Check that Internet Identity authentication is working
 - Ensure the backend canister is properly initialized
+
+### Webhook Issues
+
+If uploads or AI requests fail after deployment:
+- Verify the webhook endpoint is accessible
+- Check ActivePieces flow logs for errors
+- Ensure the flow returns the expected JSON structure
+- See [WEBHOOK_SETUP.md](./WEBHOOK_SETUP.md) for response format requirements
 
 ## Additional Resources
 

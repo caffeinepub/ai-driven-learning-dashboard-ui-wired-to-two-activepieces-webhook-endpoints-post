@@ -1,12 +1,12 @@
 # Specification
 
 ## Summary
-**Goal:** Make the Summary shown on the public/deployed app link noticeably longer and more informative after users upload notes, without changing quiz questions or quiz behavior.
+**Goal:** Make Notes Quizzer work out-of-the-box by hard-coding the ActivePieces webhook URL in the frontend and removing any dependency on configuring `VITE_WEBHOOK_URL`.
 
 **Planned changes:**
-- Update the Summary rendering to show the full returned summary text (preserve line breaks; avoid UI truncation/cutoff).
-- When a webhook is configured, detect when the webhook-provided summary is below a minimum length threshold and automatically generate an expanded client-side summary from the uploaded file text as a fallback.
-- Keep quiz behavior unchanged: when a webhook is configured, always display the webhook-provided `quiz_array` as-is, even if the summary falls back to client-side generation.
-- Add actionable English error messaging if client-side text extraction fails (e.g., image-only PDFs), while leaving quiz rendering unaffected.
+- Hard-code the webhook endpoint in the frontend to `https://cloud.activepieces.com/api/v1/webhooks/arB5MIDx32mR1vdmBIC0r/sync` so uploads and “Ask AI” work without build-time environment variables.
+- Define and document consistent behavior when `VITE_WEBHOOK_URL` is present (either ignored or allowed to override), without adding any runtime configuration UI.
+- Remove/disable any banners, warnings, prompts, or help panels that instruct users to set `VITE_WEBHOOK_URL` (including the dashboard “Webhook URL is not configured…” message).
+- Update error handling so upload/Ask AI failures no longer mention missing `VITE_WEBHOOK_URL`, and instead report actual network/response errors.
 
-**User-visible outcome:** After uploading a document via the deployed/public link, users see a substantially longer, multi-paragraph summary (when the source content supports it), and the interactive quiz remains exactly as before.
+**User-visible outcome:** The app no longer shows webhook-setup instructions or banners, and both file uploads and Ask AI requests work without requiring the user to configure `VITE_WEBHOOK_URL`.

@@ -1,58 +1,81 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Notes Quizzer – Longer, more informative summaries on public/deployed app",
+  "title": "Notes Quizzer — Hard-code ActivePieces webhook URL and remove VITE_WEBHOOK_URL dependency (frontend-only)",
   "requirements": [
     {
       "id": "REQ-1",
-      "summary": "Render a noticeably longer, more informative summary after note upload while preserving the existing quiz behavior and ensuring the UI shows the full summary text with line breaks.",
+      "summary": "Default to a hard-coded ActivePieces webhook URL so the app works without VITE_WEBHOOK_URL, with documented override behavior.",
       "acceptanceCriteria": [
-        "After uploading a document, the Summary section shows substantially more content than the current short summary (e.g., at least multiple paragraphs when source text contains multiple paragraphs).",
-        "Quiz behavior remains unchanged (still renders the existing questions and interaction behavior).",
-        "The summary UI renders the full returned summary text without cutting it off (line breaks preserved; no additional truncation in the UI beyond what the summary generator explicitly adds)."
+        "If VITE_WEBHOOK_URL is not set at build time, uploads and Ask AI requests still call https://cloud.activepieces.com/api/v1/webhooks/arB5MIDx32mR1vdmBIC0r/sync",
+        "If VITE_WEBHOOK_URL is set, the app behavior is documented and consistent (either it overrides the hard-coded URL or it is ignored), and no runtime UI is required to configure it"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/SummaryCard.tsx",
+          "path": "frontend/src/lib/env.ts",
           "operation": "modify",
-          "description": "Update SummaryCard to render multi-paragraph summaries more clearly (e.g., split on blank lines into multiple paragraph blocks) while preserving line breaks and avoiding any UI truncation. Continue composing existing shadcn-ui Card/Button components (do not edit files under frontend/src/components/ui). Verify the component's usage instructions before implementing."
+          "description": "Introduce a hard-coded default webhook URL constant set to https://cloud.activepieces.com/api/v1/webhooks/arB5MIDx32mR1vdmBIC0r/sync and update getWebhookUrl() to return (1) VITE_WEBHOOK_URL when present (override) or (2) the hard-coded default when absent; update/rename hasWebhookUrl() semantics as needed so it no longer implies required env configuration."
         },
         {
-          "path": "frontend/src/pages/DashboardPage.tsx",
+          "path": "frontend/src/lib/activepieces.ts",
           "operation": "modify",
-          "description": "Ensure the Summary section displays the full expanded summary returned from upload processing and does not introduce additional truncation. Keep QuizSection wiring and behavior unchanged. Use existing shadcn-ui Alert for any informational messaging if needed; verify the component's usage instructions before implementing."
+          "description": "Use the updated getWebhookUrl() resolution logic so uploadFile() and askAI() always target the hard-coded URL when VITE_WEBHOOK_URL is missing, while still allowing the documented env override behavior when it is set."
+        },
+        {
+          "path": "frontend/.env.example",
+          "operation": "modify",
+          "description": "Update comments to clarify that VITE_WEBHOOK_URL is optional and only overrides the built-in default webhook URL (no longer required for the app to function)."
+        },
+        {
+          "path": "frontend/WEBHOOK_SETUP.md",
+          "operation": "modify",
+          "description": "Revise documentation to reflect the new default hard-coded webhook URL and the optional VITE_WEBHOOK_URL override behavior; remove instructions that suggest the app requires env configuration to function."
         }
       ]
     },
     {
       "id": "REQ-2",
-      "summary": "When a webhook returns a too-short summary, generate an expanded client-side summary from the uploaded file text using the existing offline summarization logic, without altering the webhook-provided quiz array.",
+      "summary": "Remove/disable any UI and project guidance that prompts users to configure VITE_WEBHOOK_URL or paste/save webhook URLs at runtime.",
       "acceptanceCriteria": [
-        "If the webhook response summary is below a defined minimum length threshold, the app extracts text from the uploaded file in the browser and generates a longer summary using the same offline summarization logic used when no webhook is configured.",
-        "If the webhook response summary is not short, the app uses the webhook-provided summary as-is.",
-        "In all cases, the quiz array shown to the user remains the webhook-provided quiz_array when a webhook is configured (no reduction in question count caused by the summary fallback).",
-        "User-facing errors remain in English and remain actionable if text extraction fails (e.g., image-only PDF)."
+        "When the app loads in authenticated mode, there is no visible banner or alert telling the user to set VITE_WEBHOOK_URL",
+        "No UI flow exists that asks the user to paste/save/clear a webhook URL at runtime (e.g., via localStorage overrides or a setup panel)"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/lib/offlineNoteProcessing.ts",
+          "path": "frontend/DEPLOYMENT.md",
           "operation": "modify",
-          "description": "Refactor to expose summary-only capabilities (e.g., export a function that extracts text from a File and returns an offline-generated summary) so webhook flows can reuse the same offline summarization logic without regenerating/altering quiz questions. Keep current offline truncation rules intact."
+          "description": "Remove/replace troubleshooting guidance that instructs users to use an in-app webhook setup panel or configure VITE_WEBHOOK_URL to fix a 'Webhook URL is not configured' issue; ensure the guide matches the new always-available hard-coded URL behavior."
         },
         {
-          "path": "frontend/src/lib/types.ts",
-          "operation": "modify",
-          "description": "Extend UploadResponse typing to support summary-fallback signaling (e.g., optional fields indicating whether an offline-expanded summary was used and/or an actionable fallback error message) without changing existing quiz item types."
+          "path": "frontend/src/components/WebhookSetupHelpPanel.tsx",
+          "operation": "delete",
+          "description": "Delete the unused Webhook setup/help panel placeholder to avoid any future UI prompts for configuring VITE_WEBHOOK_URL or runtime webhook setup."
         },
+        {
+          "path": "frontend/src/lib/webhookOverride.ts",
+          "operation": "delete",
+          "description": "Delete the unused webhook override placeholder to ensure there is no runtime/local override mechanism implied or later surfaced in the UI."
+        }
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "summary": "Ensure upload and Ask AI flows do not fail with missing VITE_WEBHOOK_URL errors; show only real network/response failures.",
+      "acceptanceCriteria": [
+        "With the hard-coded URL enabled, uploading a valid file does not throw an error about missing VITE_WEBHOOK_URL",
+        "With the hard-coded URL enabled, Ask AI does not throw an error about missing VITE_WEBHOOK_URL",
+        "If the webhook responds with non-OK status or invalid payload, the user sees a clear error describing the request/response failure (not env-var setup steps)"
+      ],
+      "file_operations": [
         {
           "path": "frontend/src/lib/activepieces.ts",
           "operation": "modify",
-          "description": "Implement a minimum-length threshold check for webhook-provided summaries in uploadFile. If below threshold, extract text client-side from the uploaded file and generate an expanded summary using the exported offline summarization logic, while always keeping quiz_array from the webhook response unchanged. If extraction fails, preserve the webhook quiz_array and return an actionable English message describing why summary expansion could not be performed."
+          "description": "Remove any explicit error branches/messages that reference missing VITE_WEBHOOK_URL; rely on the default URL resolution and keep errors focused on request failures (non-OK status) and response validation (invalid/missing fields)."
         },
         {
-          "path": "frontend/src/pages/DashboardPage.tsx",
+          "path": "frontend/src/lib/env.ts",
           "operation": "modify",
-          "description": "Handle new UploadResponse optional fields to inform the user when an offline summary fallback was used or when summary expansion failed. Use existing shadcn-ui Alert for actionable English messaging; verify the component's usage instructions before implementing."
+          "description": "Remove or repurpose configuration-specific exports (e.g., MISSING_WEBHOOK_ERROR) so no missing-env messaging is produced by shared helpers; ensure helpers cannot return null in normal operation given the hard-coded default."
         }
       ]
     }
