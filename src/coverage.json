@@ -1,70 +1,38 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-17T11:22:17.303Z",
+  "generatedAt": "2026-02-19T02:44:57.017Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 3,
-    "implemented": 3,
+    "total": 1,
+    "implemented": 1,
     "items": [
       {
         "id": "REQ-1",
-        "summary": "Hard-code the ActivePieces webhook endpoint URL in the frontend code so the app works without configuring the VITE_WEBHOOK_URL environment variable. Use this exact URL: https://cloud.activepieces.com/api/v1/webhooks/arB5MIDx32mR1vdmBIC0r/sync",
+        "summary": "Add a feature flag or conditional rendering control to hide the 'Ask AI About Your Notes' section in the dashboard without permanently removing the code, ensuring the section can be easily re-enabled later if needed",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/lib/env.ts",
-          "frontend/src/lib/activepieces.ts",
-          "frontend/.env.example",
-          "frontend/WEBHOOK_SETUP.md"
+          "frontend/src/config/features.ts",
+          "frontend/src/pages/DashboardPage.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/lib/env.ts",
-          "frontend/src/lib/activepieces.ts",
-          "frontend/.env.example",
-          "frontend/WEBHOOK_SETUP.md"
-        ]
-      },
-      {
-        "id": "REQ-2",
-        "summary": "Remove/disable any UI warnings, prompts, or help panels that instruct the user to configure VITE_WEBHOOK_URL (e.g., messages like “Webhook URL is not configured...”). The dashboard should not display any webhook setup banner in live mode.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/DEPLOYMENT.md",
-          "frontend/src/components/WebhookSetupHelpPanel.tsx",
-          "frontend/src/lib/webhookOverride.ts"
-        ],
-        "matchedFiles": [
-          "frontend/DEPLOYMENT.md"
-        ]
-      },
-      {
-        "id": "REQ-3",
-        "summary": "Ensure file upload and Ask AI flows no longer fail with an error that specifically references missing VITE_WEBHOOK_URL. Error messages (when they occur) should reflect actual network/response failures, not configuration instructions.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/lib/activepieces.ts",
-          "frontend/src/lib/env.ts"
-        ],
-        "matchedFiles": [
-          "frontend/src/lib/activepieces.ts",
-          "frontend/src/lib/env.ts"
+          "frontend/src/config/features.ts",
+          "frontend/src/pages/DashboardPage.tsx"
         ]
       }
     ]
   },
   "changedFiles": [
     "build-request.json",
+    "caffeine.lock.json",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/.env.example",
-    "frontend/DEPLOYMENT.md",
-    "frontend/WEBHOOK_SETUP.md",
-    "frontend/src/lib/activepieces.ts",
-    "frontend/src/lib/env.ts",
+    "frontend/src/config/features.ts",
+    "frontend/src/pages/DashboardPage.tsx",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

@@ -1,7 +1,7 @@
 {
   "frontend/src/App.tsx": "Main application component that handles authentication state and conditionally renders SignInPage or DashboardPage based on Internet Identity authentication status.",
   "frontend/src/pages/SignInPage.tsx": "Authentication page with Internet Identity sign-in, now displaying \"AI Learning Coach\" as the app name throughout.",
-  "frontend/src/pages/DashboardPage.tsx": "Main dashboard page with file upload, summary display, quiz functionality, and Ask AI module; shows error alerts when webhook operations fail with no configuration UI or fallback processing.",
+  "frontend/src/pages/DashboardPage.tsx": "Main dashboard page with file upload, summary display, quiz functionality, and Ask AI module; the Ask AI section is now conditionally rendered based on the ENABLE_ASK_AI_SECTION feature flag from the features config.",
   "frontend/src/components/layout/AppShell.tsx": "Reusable layout wrapper with header, main content area, and footer, now displaying \"AI Learning Coach\" as the app name.",
   "frontend/src/components/FileUpload.tsx": "File upload component with drag-and-drop support, file selection UI accepting PDF, TXT, and MD files via accept attribute, upload progress indication, clear file functionality, and visible hint displaying accepted file types in the empty state.",
   "frontend/src/components/SummaryCard.tsx": "Presentational component displaying the full summary text from backend response in a clean card layout with preserved whitespace and line breaks, word wrapping for long content, and a trash icon delete button in the card header.",
@@ -19,5 +19,6 @@
   "frontend/src/lib/webhookOverride.ts": "Client-side utility for persisting, validating, and retrieving webhook URL overrides using localStorage with validation helpers for empty values and http(s) scheme requirements.",
   "frontend/DEPLOYMENT.md": "Deployment guide with simplified webhook configuration section reflecting the built-in default URL behavior.",
   "frontend/src/lib/offlineNoteProcessing.ts": "Client-side note processing module that extracts text from .txt, .md, and .pdf files and generates comprehensive summaries (up to 8 paragraphs or 5000 characters with preserved formatting) and reliably produces 10 quiz questions for documents with sufficient content.",
-  "frontend/src/lib/pdfTextExtraction.ts": "Client-side PDF text extraction utility that dynamically loads PDF.js from CDN via script tag injection and extracts plain text from PDF files using proper TypeScript type definitions for the PDF.js library."
+  "frontend/src/lib/pdfTextExtraction.ts": "Client-side PDF text extraction utility that dynamically loads PDF.js from CDN via script tag injection and extracts plain text from PDF files using proper TypeScript type definitions for the PDF.js library.",
+  "frontend/src/config/features.ts": "Feature flags configuration file containing boolean flags to enable/disable specific features; currently sets ENABLE_ASK_AI_SECTION to false to hide the Ask AI section."
 }

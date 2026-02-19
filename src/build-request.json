@@ -1,91 +1,43 @@
 {
   "kind": "build_request",
-  "title": "Hard-code ActivePieces webhook URL (remove env-var dependency)",
-  "projectName": "Notes Quizzer",
-  "priority": "high",
+  "title": "Hide Ask AI About Your Notes section",
+  "projectName": "AI Learning Coach",
+  "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Hard-code the ActivePieces webhook endpoint URL in the frontend code so the app works without configuring the VITE_WEBHOOK_URL environment variable. Use this exact URL: https://cloud.activepieces.com/api/v1/webhooks/arB5MIDx32mR1vdmBIC0r/sync",
+      "text": "Add a feature flag or conditional rendering control to hide the 'Ask AI About Your Notes' section in the dashboard without permanently removing the code, ensuring the section can be easily re-enabled later if needed",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-4",
-          "msg-5"
+          "msg-latest"
         ],
         "quotes": [
-          "Do you want me to update your app so that the webhook URL is hard‑coded into the frontend code instead of using an environment variable?",
-          "yes"
+          "THERE IS A SECTION CALLED 'ASK AI ABOUT YOUR NOTES' IN THIS SCREEN SHOT. WHICH I WANT TO HIDE",
+          "only hide this section.do not remove permanantly"
         ]
       },
       "acceptanceCriteria": [
-        "If VITE_WEBHOOK_URL is not set at build time, uploads and Ask AI requests still call https://cloud.activepieces.com/api/v1/webhooks/arB5MIDx32mR1vdmBIC0r/sync",
-        "If VITE_WEBHOOK_URL is set, the app behavior is documented and consistent (either it overrides the hard-coded URL or it is ignored), and no runtime UI is required to configure it"
-      ]
-    },
-    {
-      "id": "REQ-2",
-      "text": "Remove/disable any UI warnings, prompts, or help panels that instruct the user to configure VITE_WEBHOOK_URL (e.g., messages like “Webhook URL is not configured...”). The dashboard should not display any webhook setup banner in live mode.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-1",
-          "msg-2",
-          "msg-5"
-        ],
-        "quotes": [
-          "Deployment error",
-          "in this window i cannot see environment variable. please add the url by yourself",
-          "yes"
-        ]
-      },
-      "acceptanceCriteria": [
-        "When the app loads in authenticated mode, there is no visible banner or alert telling the user to set VITE_WEBHOOK_URL",
-        "No UI flow exists that asks the user to paste/save/clear a webhook URL at runtime (e.g., via localStorage overrides or a setup panel)"
-      ]
-    },
-    {
-      "id": "REQ-3",
-      "text": "Ensure file upload and Ask AI flows no longer fail with an error that specifically references missing VITE_WEBHOOK_URL. Error messages (when they occur) should reflect actual network/response failures, not configuration instructions.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-3",
-          "msg-5"
-        ],
-        "quotes": [
-          "Add this exactly: • Key: `VITE_WEBHOOK_URL`",
-          "yes"
-        ]
-      },
-      "acceptanceCriteria": [
-        "With the hard-coded URL enabled, uploading a valid file does not throw an error about missing VITE_WEBHOOK_URL",
-        "With the hard-coded URL enabled, Ask AI does not throw an error about missing VITE_WEBHOOK_URL",
-        "If the webhook responds with non-OK status or invalid payload, the user sees a clear error describing the request/response failure (not env-var setup steps)"
+        "The 'Ask AI About Your Notes' section is not visible in the dashboard after summaries and quizzes are generated",
+        "The code for the Ask AI section remains in the codebase with a simple flag or boolean to control visibility",
+        "All other sections (quiz display, summaries, file upload) continue to function normally and are not affected by this change",
+        "The section can be easily re-enabled by changing a single configuration value or boolean flag"
       ]
     }
   ],
   "constraints": [
-    "Do not edit any files under frontend/src/components/ui (compose them instead).",
-    "Do not modify immutable frontend paths: frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useInternetIdentity.tsx, frontend/src/hooks/useActor.ts, frontend/src/main.tsx."
+    "Do not permanently delete the Ask AI code from the codebase",
+    "Do not modify or affect the quiz display, summary cards, or file upload functionality",
+    "The solution must be simple to reverse (re-enable the section) in the future"
   ],
   "nonGoals": [
-    "Adding a new backend service or storing webhook URLs in the Motoko canister state",
-    "Adding a runtime settings screen to manage webhook URLs",
-    "Integrating third-party auth beyond Internet Identity"
+    "Removing Ask AI functionality from the backend or API layer",
+    "Modifying the quiz or summary generation logic",
+    "Changing the authentication or sign-in flow",
+    "Adding new AI features or capabilities"
   ],
   "imageRequirements": {
     "required": [],
     "edits": []
-  },
-  "userProfileUpdate": {
-    "goalsToAdd": [],
-    "goalsToRemove": [],
-    "preferencesToAdd": [],
-    "preferencesToRemove": [],
-    "miscToAdd": [],
-    "miscToRemove": [],
-    "fieldsToSet": {},
-    "fieldsToDelete": []
   }
 }

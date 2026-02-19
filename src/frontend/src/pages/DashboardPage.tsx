@@ -9,6 +9,7 @@ import { uploadFile, askAI } from '../lib/activepieces';
 import type { QuizItem } from '../lib/types';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertCircle } from 'lucide-react';
+import { ENABLE_ASK_AI_SECTION } from '../config/features';
 
 export default function DashboardPage() {
   const { clear } = useInternetIdentity();
@@ -120,8 +121,8 @@ export default function DashboardPage() {
           </section>
         )}
 
-        {/* Ask AI Section */}
-        {summary && (
+        {/* Ask AI Section - Conditionally rendered based on feature flag */}
+        {ENABLE_ASK_AI_SECTION && summary && (
           <section>
             <AskAIModule
               onAsk={handleAskAI}

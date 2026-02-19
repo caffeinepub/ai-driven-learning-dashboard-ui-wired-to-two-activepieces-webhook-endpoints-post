@@ -1,34 +1,20 @@
 {
   "schemaVersion": "1.0.0",
   "projectStateVersion": 3,
-  "summary": "New project",
+  "summary": "Study notes application with quiz generation, summary creation, and AI chat features. User authentication via Internet Identity.",
   "architectural_notes": [
-    "Webhook URL will be embedded in frontend code instead of read from environment variables (deployment no longer depends on VITE_WEBHOOK_URL)."
+    "Application includes quiz generation and summary creation features",
+    "Currently uses Internet Identity for authentication",
+    "AI chat section ('Ask AI About Your Notes') exists but should be hidden"
   ],
   "known_issues": [],
-  "isFixRequest": true,
+  "isFixRequest": false,
   "existing_features": [
     {
-      "id": "feature-hard-code-the-activepieces-webhook-endpoint-url-in-the-frontend-code-so-the-app-works-without-configuring-the-vite-webhook-url-environment-variable-use-this-exact-url-https-cloud-activepieces-com-api-v1-webhooks-arb5midx32mr1vdmbic0r-sync",
-      "title": "Hard-code the ActivePieces webhook endpoint URL in the frontend code so the app works without configuring the VITE_WEBHOOK_URL environment variable. Use this exact URL: https://cloud.activepieces.com/api/v1/webhooks/arB5MIDx32mR1vdmBIC0r/sync",
+      "id": "feature-add-a-feature-flag-or-conditional-rendering-control-to-hide-the-ask-ai-about-your-notes-section-in-the-dashboard-without-permanently-removing-the-code-ensuring-the-section-can-be-easily-re-enabled-later-if-needed",
+      "title": "Add a feature flag or conditional rendering control to hide the 'Ask AI About Your Notes' section in the dashboard without permanently removing the code, ensuring the section can be easily re-enabled later if needed",
       "reqIds": [
         "REQ-1"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-remove-disable-any-ui-warnings-prompts-or-help-panels-that-instruct-the-user-to-configure-vite-webhook-url-e-g-messages-like-webhook-url-is-not-configured-the-dashboard-should-not-display-any-webhook-setup-banner-in-live-mode",
-      "title": "Remove/disable any UI warnings, prompts, or help panels that instruct the user to configure VITE_WEBHOOK_URL (e.g., messages like “Webhook URL is not configured...”). The dashboard should not display any webhook setup banner in live mode.",
-      "reqIds": [
-        "REQ-2"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-ensure-file-upload-and-ask-ai-flows-no-longer-fail-with-an-error-that-specifically-references-missing-vite-webhook-url-error-messages-when-they-occur-should-reflect-actual-network-response-failures-not-configuration-instructions",
-      "title": "Ensure file upload and Ask AI flows no longer fail with an error that specifically references missing VITE_WEBHOOK_URL. Error messages (when they occur) should reflect actual network/response failures, not configuration instructions.",
-      "reqIds": [
-        "REQ-3"
       ],
       "version": 1
     }
@@ -36,12 +22,18 @@
   "new_feature_requests": [
     {
       "id": "AR-1",
-      "summary": "Hard-code webhook URL in frontend code (avoid needing VITE_WEBHOOK_URL environment variable)",
+      "summary": "Replace Internet Identity with username/password authentication and forgot password feature",
       "reqIds": [],
       "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "Hide 'Ask AI About Your Notes' section without removing code",
+      "reqIds": [],
+      "status": "in_progress"
     }
   ],
-  "projectName": "Notes Quizzer",
+  "projectName": "AI Learning Coach",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }
